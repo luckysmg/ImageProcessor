@@ -12,11 +12,14 @@ int main() {
 
     //Processor::genHistogram(path);
     //Processor::histogramEqualization(path);
+
+
+
     Processor::averageImage(path);
 
-    //Processor::medianFiltering(path);
+    Processor::medianFiltering(path);
 
-
+//
 
 
 

@@ -6,6 +6,8 @@
 
 #include "Processor.h"
 #include "Util.h"
+#include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -439,13 +441,50 @@ void Processor::averageImage(char *path) {
     for (i = 0; i < height; i++) {
         fwrite(RGBout[i], sizeof(tagRGB), width, fpout);
     }
-
     fclose(fpin);
     fclose(fpout);
 }
 
 void Processor::medianFiltering(char *path) {
 
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            vector<int> vector;
+            if(i > 0 && i < bmpHeight - 1 && j > 0 && j < bmpWidth){
+
+                vector.push_back(imgInfo.img[(i - 1) * bmpWidth + j - 1]);
+                vector.push_back(imgInfo.img[i * bmpWidth + j - 1]);
+                vector.push_back(imgInfo.img[(i + 1) * bmpWidth + j - 1]);
+                vector.push_back(imgInfo.img[(i - 1) * bmpWidth + j]);
+                vector.push_back(imgInfo.img[i * bmpWidth + j]);
+                vector.push_back(imgInfo.img[(i + 1) * bmpWidth + j]);
+                vector.push_back(imgInfo.img[(i - 1) * bmpWidth + j + 1]);
+                vector.push_back(imgInfo.img[i * bmpWidth + j + 1]);
+                vector.push_back(imgInfo.img[(i + 1) * bmpWidth + j + 1]);
+                std::sort(vector.begin(),vector.end());
+                imgInfo.img[i * bmpWidth + j] = vector.at(4);
+            }else{
+                //1.不处理，什么都不做
+
+                //2.进行像素边界复制
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth + getJInRange(bmpWidth,j - 1)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i) * bmpWidth + getJInRange( bmpWidth,j - 1)]);
+                vector.push_back(imgInfo.img[(getIInRange(bmpHeight,i + 1)) * bmpWidth + getJInRange( bmpWidth,j - 1)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth + getJInRange(bmpWidth,j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i) * bmpWidth +getJInRange(bmpWidth,j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i + 1) * bmpWidth + getJInRange(bmpWidth,j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth +getJInRange( bmpWidth,j + 1)]);
+                vector.push_back(imgInfo.img[i * bmpWidth + j + 1]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i + 1) * bmpWidth +getJInRange(bmpWidth ,j + 1)]);
+                std::sort(vector.begin(),vector.end());
+                imgInfo.img[i * bmpWidth + j] = vector.at(4);
+            }
+        }
+    }
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "MedianFiltering.bmp").data(), imgInfo.imgsize);
 }
 
 
