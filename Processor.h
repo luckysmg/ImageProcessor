@@ -14,7 +14,7 @@ static const string rootPath = "C:/Users/luckysmg/Desktop/imgs/";
 class Processor {
 
 private:
-    static int getIInRange(int height,int i){
+    static int getIInRange(unsigned int height,int i){
         if(i < 0){
             return 0;
         }
@@ -25,7 +25,7 @@ private:
         return i;
     }
 
-    static int getJInRange(int width,int j) {
+    static int getJInRange(unsigned int width,int j) {
 
         if (j < 0) {
             return 0;
@@ -63,6 +63,9 @@ public:
 
     ///平均处理（基于模板卷积运算）
     static void averageImage(char* path);
+
+    ///中值滤波
+    static void medianFiltering(char* path);
 
 
 

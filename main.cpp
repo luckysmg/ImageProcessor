@@ -10,14 +10,11 @@ int main() {
     //Processor::covert24BitImageToGrey(path);
     //Processor::convertColor(path);
 
-
-
     //Processor::genHistogram(path);
     //Processor::histogramEqualization(path);
     Processor::averageImage(path);
 
-
-
+    //Processor::medianFiltering(path);
 
 
 

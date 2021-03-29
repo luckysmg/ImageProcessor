@@ -51,7 +51,7 @@ typedef struct tagIMGINFO {
     BITMAPFILEHEADER fileHeader;
     BITMAPINFOHEADER infoHeader;
     RGBQUAD pRGB[256];
-    unsigned char* img;
+    BYTE* img;
     int imgsize;
 } ImageInfo;
 

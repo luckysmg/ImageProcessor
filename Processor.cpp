@@ -257,12 +257,12 @@ void Processor::histogramEqualization(char *path) {
     Processor::genHistogram(path);
 
     int data[256] = {0};
-    ImageInfo imginfo = readImage(path);
-    int bmpHeight = imginfo.infoHeader.biHeight;
-    int bmpWidth = imginfo.imgsize / imginfo.infoHeader.biHeight;
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
-            int key = imginfo.img[i * bmpWidth + j];
+            int key = imgInfo.img[i * bmpWidth + j];
             data[key]++;
         }
     }
@@ -328,11 +328,11 @@ void Processor::histogramEqualization(char *path) {
     resInfoHeader.biHeight = resHeight;
     resInfoHeader.biPlanes = 1;
     resInfoHeader.biBitCount = 24;
-    resInfoHeader.biCompression = imginfo.infoHeader.biCompression;
+    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
     resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
-    resInfoHeader.biYPelsPerMeter = imginfo.infoHeader.biYPelsPerMeter;
-    resInfoHeader.biClrUsed = imginfo.infoHeader.biClrUsed;
-    resInfoHeader.biClrImportant = imginfo.infoHeader.biClrImportant;
+    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
+    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
+    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
 
     write(resFileHeader, resInfoHeader, res, (rootPath + "Equalization.bmp").data(), resSize);
 
@@ -442,6 +442,10 @@ void Processor::averageImage(char *path) {
 
     fclose(fpin);
     fclose(fpout);
+}
+
+void Processor::medianFiltering(char *path) {
+
 }
 
 
