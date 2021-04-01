@@ -8,6 +8,7 @@
 #include "Util.h"
 #include <algorithm>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -262,6 +263,7 @@ void Processor::histogramEqualization(char *path) {
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int key = imgInfo.img[i * bmpWidth + j];
@@ -285,11 +287,21 @@ void Processor::histogramEqualization(char *path) {
     for (int i = 1; i < 256; i++) {
         resPer[i] = resPer[i - 1] + percents[i];
     }
+
+    int newData[256];
+
+    unordered_map<int,int> map;
+
     //进行灰度值映射
     for (int i = 0; i < 256; i++) {
         int newKey = int((double)255 * (double) resPer[i] + 0.5);
-        data[newKey] = data[i];
-        data[i] = 0;
+        newData[newKey] = data[i];
+        map[i] = newKey;
+    }
+
+    //赋值原数组
+    for (int i = 0; i < 256; ++i) {
+        data[i] = newData[i];
     }
 
     int maxCount = 0;
@@ -335,9 +347,16 @@ void Processor::histogramEqualization(char *path) {
     resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
     resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
     resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
+    write(resFileHeader, resInfoHeader, res, (rootPath + "EqualizationHistogram.bmp").data(), resSize);
 
-    write(resFileHeader, resInfoHeader, res, (rootPath + "Equalization.bmp").data(), resSize);
-
+    BYTE *resImage = new BYTE[imgInfo.imgsize];
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int key = imgInfo.img[i * bmpWidth + j];
+            resImage[i * bmpWidth + j] = map[key];
+        }
+    }
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "EqualizationImage.bmp").data(), imgInfo.imgsize);
 }
 
 void Processor::averageImage(char *path) {

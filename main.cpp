@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\noise2.bmp";
+    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\testhuidu.bmp";
 
 
     //Processor::divide24ImageToRGBAndGenImages(path);
@@ -11,15 +11,10 @@ int main() {
     //Processor::convertColor(path);
 
     //Processor::genHistogram(path);
-    //Processor::histogramEqualization(path);
+    Processor::histogramEqualization(path);
 
-
-
-    Processor::averageImage(path);
-
-    Processor::medianFiltering(path);
-
-//
+//    Processor::averageImage(path);
+//    Processor::medianFiltering(path);
 
 
 
