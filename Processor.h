@@ -77,7 +77,6 @@ public:
     ///图像镜像
     static void mirrorImage(char* path);
 
-
     ///图像旋转
     static void rotateImage(char* path);
 

@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\rgb.bmp";
+    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\noise2.bmp";
 
 
     //Processor::divide24ImageToRGBAndGenImages(path);
@@ -18,7 +18,12 @@ int main() {
 
     //Processor::scaleImage(path);
 
-    Processor::translateImage(path);
+    //Processor::translateImage(path);
+
+    //Processor::mirrorImage(path);
+
+    //Processor::rotateImage(path);
+    Processor::scaleImage(path);
 
 
 

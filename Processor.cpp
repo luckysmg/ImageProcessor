@@ -510,29 +510,43 @@ void Processor::medianFiltering(char *path) {
 
 void Processor::scaleImage(char *path) {
 
+    int scale = 3;
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
+    int resWidth = bmpWidth * scale;
+    int resHeight = bmpHeight * scale;
+    int resSize = resWidth * resHeight;
+    BYTE *newImage = new BYTE[resSize];
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
-            int origin = imgInfo.img[i * bmpWidth + j];
-
-
+            newImage[i * scale * bmpWidth + j * scale] = imgInfo.img[i * bmpWidth + j];
         }
     }
 
 
+    BITMAPFILEHEADER resFileHeader;
+    BITMAPINFOHEADER resInfoHeader;
 
+    resFileHeader.bfType = 19778;
+    resFileHeader.bfOffBits = 54;
+    resFileHeader.bfReserved1 = 0;
+    resFileHeader.bfReserved2 = 0;
+    resFileHeader.bfSize = resFileHeader.bfOffBits + resWidth * resHeight;
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
-
-
-
-
-
+    resInfoHeader.biSize = 40;
+    resInfoHeader.biWidth = resWidth / (imgInfo.infoHeader.biBitCount / 8);
+    resInfoHeader.biHeight = resHeight;
+    resInfoHeader.biPlanes = 1;
+    resInfoHeader.biBitCount = 24;
+    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
+    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
+    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
+    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
+    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
+    write(resFileHeader, resInfoHeader, newImage, (rootPath + "scaledImage.bmp").data(), resSize);
 }
 
 void Processor::translateImage(char *path) {
@@ -559,26 +573,56 @@ void Processor::translateImage(char *path) {
             newImage[newY * bmpWidth + newX] = imgInfo.img[i * bmpWidth + j];
         }
     }
-
-
-
-
     write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "translatedImage.bmp").data(), imgInfo.imgsize);
 }
 
 
 void Processor::mirrorImage(char *path) {
 
-}
-
-
-void Processor::rotateImage(char *path) {
-
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
+    BYTE *newImageV = new BYTE[imgInfo.imgsize];
+    BYTE *newImageH = new BYTE[imgInfo.imgsize];
+
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            newImageV[i * bmpWidth + j] = imgInfo.img[(bmpHeight - 1 - i) * bmpWidth + j];
+            newImageH[i * bmpWidth + j] = imgInfo.img[i * bmpWidth + (bmpWidth - 1 - j)];
+        }
+    }
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, newImageH, (rootPath + "mirrorImageH.bmp").data(), imgInfo.imgsize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, newImageV, (rootPath + "mirrorImageV.bmp").data(), imgInfo.imgsize);
+}
+
+void Processor::rotateImage(char *path) {
+
+    double PI = 3.1415926;
+    double angle = PI / 16;
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
+
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+
+            double newX = j * cos(angle) + i * sin(angle);
+            double newY = -j * sin(angle) + i * cos(angle);
+            if(newX < 0 || newX > bmpWidth || newY < 0 || newY > bmpHeight){
+                continue;
+            }
+
+            newImage[(int)newY * bmpWidth + (int)newX] = imgInfo.img[i * bmpWidth + j];
+
+        }
+    }
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
 }
 
 
