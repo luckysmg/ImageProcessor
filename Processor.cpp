@@ -15,6 +15,7 @@ using namespace std;
 
 void Processor::divide24ImageToRGBAndGenImages(char *path) {
 
+
     FILE *file = fopen(path, "rb");
     FILE *pfoutr = fopen((rootPath + "r.bmp").data(), "wb");
     FILE *pfoutg = fopen((rootPath + "g.bmp").data(), "wb");
@@ -505,6 +506,81 @@ void Processor::medianFiltering(char *path) {
     }
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "MedianFiltering.bmp").data(), imgInfo.imgsize);
 }
+
+
+void Processor::scaleImage(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+
+
+        }
+    }
+
+
+
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
+
+
+
+
+
+}
+
+void Processor::translateImage(char *path) {
+
+    int tx = -100;
+    int ty = -100;
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+
+
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int factor = imgInfo.infoHeader.biBitCount / 8;
+            int newX = j + tx *  factor;
+            int newY = i + ty;
+
+            if(newX < 0 || newY < 0 || newX > bmpWidth - 1 || newY > bmpHeight - 1){
+                continue;
+            }
+            newImage[newY * bmpWidth + newX] = imgInfo.img[i * bmpWidth + j];
+        }
+    }
+
+
+
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "translatedImage.bmp").data(), imgInfo.imgsize);
+}
+
+
+void Processor::mirrorImage(char *path) {
+
+}
+
+
+void Processor::rotateImage(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
+}
+
 
 
 

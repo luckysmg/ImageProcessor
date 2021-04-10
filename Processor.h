@@ -67,6 +67,20 @@ public:
     ///中值滤波
     static void medianFiltering(char* path);
 
+    ///图像缩放
+    static void scaleImage(char* path);
+
+
+    ///图像平移
+    static void translateImage(char* path);
+
+    ///图像镜像
+    static void mirrorImage(char* path);
+
+
+    ///图像旋转
+    static void rotateImage(char* path);
+
 
 
 
