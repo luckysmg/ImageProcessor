@@ -201,58 +201,58 @@ void Processor::genHistogram(char *path) {
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
-        for (int i = 0; i < bmpHeight; i++) {
-            for (int j = 0; j < bmpWidth; j++) {
-                int key = imgInfo.img[i * bmpWidth + j];
-                data[key] = data[key] + 1;
-            }
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; j++) {
+            int key = imgInfo.img[i * bmpWidth + j];
+            data[key] = data[key] + 1;
         }
+    }
 
-        int maxCount = 0;
-        for (int i = 0; i < 256; ++i) {
-            maxCount = max(maxCount, data[i]);
+    int maxCount = 0;
+    for (int i = 0; i < 256; ++i) {
+        maxCount = max(maxCount, data[i]);
+    }
+
+    int resWidth = 256 * 3;
+    int resHeight = maxCount;
+    int resSize = resWidth * resHeight;
+    BYTE *res = new BYTE[resSize];
+    for (int i = 0; i < resSize; i++) {
+        res[i] = 255;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        int count = data[i];
+        int cur = 0;
+        while (cur < count) {
+            res[i * 3 + cur * resWidth] = 0;
+            res[i * 3 + cur * resWidth + 1] = 0;
+            res[i * 3 + cur * resWidth + 2] = 0;
+            cur++;
         }
+    }
 
-        int resWidth = 256 * 3;
-        int resHeight = maxCount;
-        int resSize = resWidth * resHeight;
-        BYTE *res = new BYTE[resSize];
-        for (int i = 0; i < resSize; i++) {
-            res[i] = 255;
-        }
+    BITMAPFILEHEADER resFileHeader;
+    BITMAPINFOHEADER resInfoHeader;
 
-        for (int i = 0; i < 256; i++) {
-            int count = data[i];
-            int cur = 0;
-            while (cur < count) {
-                res[i * 3 + cur * resWidth] = 0;
-                res[i * 3 + cur * resWidth + 1] = 0;
-                res[i * 3 + cur * resWidth + 2] = 0;
-                cur++;
-            }
-        }
+    resFileHeader.bfType = 19778;
+    resFileHeader.bfOffBits = 54;
+    resFileHeader.bfReserved1 = 0;
+    resFileHeader.bfReserved2 = 0;
+    resFileHeader.bfSize = resFileHeader.bfOffBits + 256 * resHeight * 3;
 
-        BITMAPFILEHEADER resFileHeader;
-        BITMAPINFOHEADER resInfoHeader;
+    resInfoHeader.biSize = 40;
+    resInfoHeader.biWidth = 256;
+    resInfoHeader.biHeight = resHeight;
+    resInfoHeader.biPlanes = 1;
+    resInfoHeader.biBitCount = 24;
+    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
+    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
+    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
+    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
+    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
 
-        resFileHeader.bfType = 19778;
-        resFileHeader.bfOffBits = 54;
-        resFileHeader.bfReserved1 = 0;
-        resFileHeader.bfReserved2 = 0;
-        resFileHeader.bfSize = resFileHeader.bfOffBits + 256 * resHeight * 3;
-
-        resInfoHeader.biSize = 40;
-        resInfoHeader.biWidth = 256;
-        resInfoHeader.biHeight = resHeight;
-        resInfoHeader.biPlanes = 1;
-        resInfoHeader.biBitCount = 24;
-        resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
-        resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
-        resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
-        resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
-        resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
-
-        write(resFileHeader, resInfoHeader, res, (rootPath + "Histogram.bmp").data(), resSize);
+    write(resFileHeader, resInfoHeader, res, (rootPath + "Histogram.bmp").data(), resSize);
 }
 
 void Processor::histogramEqualization(char *path) {
@@ -291,11 +291,11 @@ void Processor::histogramEqualization(char *path) {
 
     int newData[256];
 
-    unordered_map<int,int> map;
+    unordered_map<int, int> map;
 
     //进行灰度值映射
     for (int i = 0; i < 256; i++) {
-        int newKey = int((double)255 * (double) resPer[i] + 0.5);
+        int newKey = int((double) 255 * (double) resPer[i] + 0.5);
         newData[newKey] = data[i];
         map[i] = newKey;
     }
@@ -357,7 +357,8 @@ void Processor::histogramEqualization(char *path) {
             resImage[i * bmpWidth + j] = map[key];
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "EqualizationImage.bmp").data(), imgInfo.imgsize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage, (rootPath + "EqualizationImage.bmp").data(),
+          imgInfo.imgsize);
 }
 
 void Processor::averageImage(char *path) {
@@ -473,7 +474,7 @@ void Processor::medianFiltering(char *path) {
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             vector<int> vector;
-            if(i > 0 && i < bmpHeight - 1 && j > 0 && j < bmpWidth){
+            if (i > 0 && i < bmpHeight - 1 && j > 0 && j < bmpWidth) {
 
                 vector.push_back(imgInfo.img[(i - 1) * bmpWidth + j - 1]);
                 vector.push_back(imgInfo.img[i * bmpWidth + j - 1]);
@@ -484,27 +485,29 @@ void Processor::medianFiltering(char *path) {
                 vector.push_back(imgInfo.img[(i - 1) * bmpWidth + j + 1]);
                 vector.push_back(imgInfo.img[i * bmpWidth + j + 1]);
                 vector.push_back(imgInfo.img[(i + 1) * bmpWidth + j + 1]);
-                std::sort(vector.begin(),vector.end());
+                std::sort(vector.begin(), vector.end());
                 imgInfo.img[i * bmpWidth + j] = vector.at(4);
-            }else{
+            } else {
                 //1.不处理，什么都不做
 
                 //2.进行像素边界复制
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth + getJInRange(bmpWidth,j - 1)]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i) * bmpWidth + getJInRange( bmpWidth,j - 1)]);
-                vector.push_back(imgInfo.img[(getIInRange(bmpHeight,i + 1)) * bmpWidth + getJInRange( bmpWidth,j - 1)]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth + getJInRange(bmpWidth,j)]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i) * bmpWidth +getJInRange(bmpWidth,j)]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i + 1) * bmpWidth + getJInRange(bmpWidth,j)]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i - 1) * bmpWidth +getJInRange( bmpWidth,j + 1)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i - 1) * bmpWidth + getJInRange(bmpWidth, j - 1)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i) * bmpWidth + getJInRange(bmpWidth, j - 1)]);
+                vector.push_back(
+                        imgInfo.img[(getIInRange(bmpHeight, i + 1)) * bmpWidth + getJInRange(bmpWidth, j - 1)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i - 1) * bmpWidth + getJInRange(bmpWidth, j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i) * bmpWidth + getJInRange(bmpWidth, j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i + 1) * bmpWidth + getJInRange(bmpWidth, j)]);
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i - 1) * bmpWidth + getJInRange(bmpWidth, j + 1)]);
                 vector.push_back(imgInfo.img[i * bmpWidth + j + 1]);
-                vector.push_back(imgInfo.img[getIInRange(bmpHeight,i + 1) * bmpWidth +getJInRange(bmpWidth ,j + 1)]);
-                std::sort(vector.begin(),vector.end());
+                vector.push_back(imgInfo.img[getIInRange(bmpHeight, i + 1) * bmpWidth + getJInRange(bmpWidth, j + 1)]);
+                std::sort(vector.begin(), vector.end());
                 imgInfo.img[i * bmpWidth + j] = vector.at(4);
             }
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "MedianFiltering.bmp").data(), imgInfo.imgsize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "MedianFiltering.bmp").data(),
+          imgInfo.imgsize);
 }
 
 
@@ -564,10 +567,10 @@ void Processor::translateImage(char *path) {
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int factor = imgInfo.infoHeader.biBitCount / 8;
-            int newX = j + tx *  factor;
+            int newX = j + tx * factor;
             int newY = i + ty;
 
-            if(newX < 0 || newY < 0 || newX > bmpWidth - 1 || newY > bmpHeight - 1){
+            if (newX < 0 || newY < 0 || newX > bmpWidth - 1 || newY > bmpHeight - 1) {
                 continue;
             }
             newImage[newY * bmpWidth + newX] = imgInfo.img[i * bmpWidth + j];
@@ -597,34 +600,91 @@ void Processor::mirrorImage(char *path) {
     write(imgInfo.fileHeader, imgInfo.infoHeader, newImageV, (rootPath + "mirrorImageV.bmp").data(), imgInfo.imgsize);
 }
 
+
 void Processor::rotateImage(char *path) {
 
     double PI = 3.1415926;
-    double angle = PI / 16;
+    double angle = PI / 4;
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
+    int factor = imgInfo.infoHeader.biBitCount / 8;
 
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
+    double h = bmpHeight * cos(angle) + bmpWidth / factor * sin(angle);
+    double w = (bmpHeight * sin(angle) + bmpWidth / factor * cos(angle)) * factor;
+    int height = (int) h;
+    int width = (int) w;
+    int size = height * width;
 
-    for (int i = 0; i < bmpHeight; i++) {
-        for (int j = 0; j < bmpWidth; ++j) {
+    cout << height << endl;
+    cout << width << endl;
+    BYTE *newImage = new BYTE[size];
 
-            double newX = j * cos(angle) + i * sin(angle);
-            double newY = -j * sin(angle) + i * cos(angle);
-            if(newX < 0 || newX > bmpWidth || newY < 0 || newY > bmpHeight){
+
+    int num;//记录每一行需要填充的字节
+    if (bmpWidth * 3 % 4 != 0) {
+        num = 4 - bmpWidth * 3 % 4;
+    } else {
+        num = 0;
+    }
+
+    int num1;//记录每一行需要填充的字节
+    if (width * 3 % 4 != 0) {
+        num1 = 4 - width * 3 % 4;
+    } else {
+        num1 = 0;
+    }
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width / factor; ++j) {
+            //转换到以图像为中心的坐标系，并进行逆旋
+
+            int tX = (j - width / factor / 2) * cos(2 * PI - angle) + (-i + bmpHeight / 2) * sin(2 * PI - angle);
+            int tY = -(j - width / factor / 2) * sin(2 * PI - angle) + (-i + bmpHeight / 2) * cos(2 * PI - angle);
+            //如果这个坐标不在原图像内，则不赋值
+            if (tX > bmpWidth / factor / 2 || tX < -bmpWidth / factor / 2 || tY > bmpHeight / 2 ||
+                tY < -bmpHeight / 2) {
                 continue;
             }
 
-            newImage[(int)newY * bmpWidth + (int)newX] = imgInfo.img[i * bmpWidth + j];
+            //再转换到原坐标系下
+            int tXN = tX + bmpWidth / factor / 2;
+            int tYN = abs(tY - bmpHeight / 2);
+            //值拷贝
+            newImage[(i * width / factor + j) * 3 + i * num1] = imgInfo.img[(tYN * bmpWidth / factor + tXN) * 3 +
+                                                                            tYN * num];
+            newImage[(i * width / factor + j) * 3 + i * num1 + 1] = imgInfo.img[(tYN * bmpWidth / factor + tXN) * 3 +
+                                                                                tYN * num + 1];
+            newImage[(i * width / factor + j) * 3 + i * num1 + 2] = imgInfo.img[(tYN * bmpWidth / factor + tXN) * 3 +
+                                                                                tYN * num + 2];
+
 
         }
     }
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "rotated.bmp").data(), imgInfo.imgsize);
+    BITMAPFILEHEADER resFileHeader;
+    BITMAPINFOHEADER resInfoHeader;
+
+    resFileHeader.bfType = 19778;
+    resFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    resFileHeader.bfReserved1 = 0;
+    resFileHeader.bfReserved2 = 0;
+    resFileHeader.bfSize = resFileHeader.bfOffBits + width * height;
+
+
+    resInfoHeader.biSize = 40;
+    resInfoHeader.biWidth = width / factor;
+    resInfoHeader.biHeight = height;
+    resInfoHeader.biPlanes = 1;
+    resInfoHeader.biBitCount = imgInfo.infoHeader.biBitCount;
+    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
+    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;;
+    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
+    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
+    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
+
+
+    write(resFileHeader, resInfoHeader, newImage, (rootPath + "rotated.bmp").data(), size);
+
+
 }
-
-
-
-

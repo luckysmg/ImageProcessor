@@ -35,7 +35,7 @@ ImageInfo readImage(char *filename) {
 
     fseek(bmp, bmpOffset, 0);
 
-    unsigned char *img = new unsigned char[imginfo.imgsize];
+    auto *img = new unsigned char[imginfo.imgsize];
     fread(img, sizeof(unsigned char), imginfo.imgsize, bmp);
     imginfo.img = img;
     fclose(bmp);
