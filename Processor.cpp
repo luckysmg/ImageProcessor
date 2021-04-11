@@ -513,43 +513,76 @@ void Processor::medianFiltering(char *path) {
 
 void Processor::scaleImage(char *path) {
 
-    int scale = 3;
     ImageInfo imgInfo = readImage(path);
-    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int m_nHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
-    int resWidth = bmpWidth * scale;
-    int resHeight = bmpHeight * scale;
-    int resSize = resWidth * resHeight;
-    BYTE *newImage = new BYTE[resSize];
+    int m_nWidth = bmpWidth / (imgInfo.infoHeader.biBitCount / 8);
+    int num;//记录每一行需要填充的字节
+    if (m_nWidth * 3 % 4 != 0)
+    {
+        num = 4 - m_nWidth * 3 % 4;
+    }
+    else {
+        num = 0;
+    }
 
-    for (int i = 0; i < bmpHeight; i++) {
-        for (int j = 0; j < bmpWidth; ++j) {
-            newImage[i * scale * bmpWidth + j * scale] = imgInfo.img[i * bmpWidth + j];
-        }
+    double scale = 2;
+
+    int desWidth = int(m_nWidth * scale);
+    int desHeight = int(m_nHeight * scale);
+
+    int num1;
+    if (desWidth * 3 % 4 != 0)
+    {
+        num1 = 4 - m_nWidth * 3 % 4;
+    }
+    else
+    {
+        num1 = 0;
     }
 
 
-    BITMAPFILEHEADER resFileHeader;
-    BITMAPINFOHEADER resInfoHeader;
+    int desBufSize = ((desWidth * imgInfo.infoHeader.biBitCount + 31) / 32) * 4 * desHeight;
 
-    resFileHeader.bfType = 19778;
-    resFileHeader.bfOffBits = 54;
-    resFileHeader.bfReserved1 = 0;
-    resFileHeader.bfReserved2 = 0;
-    resFileHeader.bfSize = resFileHeader.bfOffBits + resWidth * resHeight;
+    unsigned char *ImageSize;
+    ImageSize = new unsigned char[desBufSize];
 
-    resInfoHeader.biSize = 40;
-    resInfoHeader.biWidth = resWidth / (imgInfo.infoHeader.biBitCount / 8);
-    resInfoHeader.biHeight = resHeight;
-    resInfoHeader.biPlanes = 1;
-    resInfoHeader.biBitCount = 24;
-    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
-    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
-    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
-    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
-    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
-    write(resFileHeader, resInfoHeader, newImage, (rootPath + "scaledImage.bmp").data(), resSize);
+    BITMAPFILEHEADER fileHeader;
+    fileHeader.bfType = 0x4D42;
+    fileHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + desWidth * desHeight * imgInfo.infoHeader.biBitCount / 8;
+    fileHeader.bfReserved1 = 0;
+    fileHeader.bfReserved2 = 0;
+    fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    //Bitmap头信息
+    BITMAPINFOHEADER   infoHeader;
+    infoHeader.biSize = sizeof(BITMAPINFOHEADER);
+    infoHeader.biWidth = desWidth;
+    infoHeader.biHeight = desHeight;
+    infoHeader.biPlanes = 1;
+    infoHeader.biBitCount = imgInfo.infoHeader.biBitCount;
+    infoHeader.biCompression = imgInfo.infoHeader.biCompression;
+    infoHeader.biSizeImage = 0;
+    infoHeader.biXPelsPerMeter = 0;
+    infoHeader.biYPelsPerMeter = 0;
+    infoHeader.biClrUsed = 0;
+    infoHeader.biClrImportant = 0;
+
+
+    for (int i = 0; i < desHeight; i++)
+    {
+        for (int j = 0; j < desWidth; j++)
+        {
+            int tXN = int(j / scale);
+            int tYN = int (i / scale);
+            //值拷贝
+            ImageSize[(i*desWidth + j) * 3 + i * num1] =  imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num];
+            ImageSize[(i*desWidth + j) * 3 + i * num1 + 1] = imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num + 1];
+            ImageSize[(i*desWidth + j) * 3 + i * num1 + 2] =  imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num + 2];
+        }
+    }
+
+    write(fileHeader, infoHeader, ImageSize, (rootPath + "scaledImage.bmp").data(), desBufSize);
 }
 
 void Processor::translateImage(char *path) {

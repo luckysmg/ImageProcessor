@@ -16,14 +16,13 @@ int main() {
     //Processor::averageImage(path);
     //Processor::medianFiltering(path);
 
-    //Processor::scaleImage(path);
 
-    Processor::translateImage(path);
-
-    Processor::mirrorImage(path);
-
-    Processor::rotateImage(path);
-    //Processor::scaleImage(path);
+//    Processor::translateImage(path);
+//
+//    Processor::mirrorImage(path);
+//
+//    Processor::rotateImage(path);
+//    Processor::scaleImage(path);
 
 
 
