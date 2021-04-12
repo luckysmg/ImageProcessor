@@ -519,11 +519,9 @@ void Processor::scaleImage(char *path) {
 
     int m_nWidth = bmpWidth / (imgInfo.infoHeader.biBitCount / 8);
     int num;//记录每一行需要填充的字节
-    if (m_nWidth * 3 % 4 != 0)
-    {
+    if (m_nWidth * 3 % 4 != 0) {
         num = 4 - m_nWidth * 3 % 4;
-    }
-    else {
+    } else {
         num = 0;
     }
 
@@ -533,12 +531,9 @@ void Processor::scaleImage(char *path) {
     int desHeight = int(m_nHeight * scale);
 
     int num1;
-    if (desWidth * 3 % 4 != 0)
-    {
+    if (desWidth * 3 % 4 != 0) {
         num1 = 4 - m_nWidth * 3 % 4;
-    }
-    else
-    {
+    } else {
         num1 = 0;
     }
 
@@ -550,12 +545,13 @@ void Processor::scaleImage(char *path) {
 
     BITMAPFILEHEADER fileHeader;
     fileHeader.bfType = 0x4D42;
-    fileHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + desWidth * desHeight * imgInfo.infoHeader.biBitCount / 8;
+    fileHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) +
+                        desWidth * desHeight * imgInfo.infoHeader.biBitCount / 8;
     fileHeader.bfReserved1 = 0;
     fileHeader.bfReserved2 = 0;
     fileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
     //Bitmap头信息
-    BITMAPINFOHEADER   infoHeader;
+    BITMAPINFOHEADER infoHeader;
     infoHeader.biSize = sizeof(BITMAPINFOHEADER);
     infoHeader.biWidth = desWidth;
     infoHeader.biHeight = desHeight;
@@ -569,19 +565,16 @@ void Processor::scaleImage(char *path) {
     infoHeader.biClrImportant = 0;
 
 
-    for (int i = 0; i < desHeight; i++)
-    {
-        for (int j = 0; j < desWidth; j++)
-        {
+    for (int i = 0; i < desHeight; i++) {
+        for (int j = 0; j < desWidth; j++) {
             int tXN = int(j / scale);
-            int tYN = int (i / scale);
+            int tYN = int(i / scale);
             //值拷贝
-            ImageSize[(i*desWidth + j) * 3 + i * num1] =  imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num];
-            ImageSize[(i*desWidth + j) * 3 + i * num1 + 1] = imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num + 1];
-            ImageSize[(i*desWidth + j) * 3 + i * num1 + 2] =  imgInfo.img[(tYN *m_nWidth + tXN) * 3 + tYN*num + 2];
+            ImageSize[(i * desWidth + j) * 3 + i * num1] = imgInfo.img[(tYN * m_nWidth + tXN) * 3 + tYN * num];
+            ImageSize[(i * desWidth + j) * 3 + i * num1 + 1] = imgInfo.img[(tYN * m_nWidth + tXN) * 3 + tYN * num + 1];
+            ImageSize[(i * desWidth + j) * 3 + i * num1 + 2] = imgInfo.img[(tYN * m_nWidth + tXN) * 3 + tYN * num + 2];
         }
     }
-
     write(fileHeader, infoHeader, ImageSize, (rootPath + "scaledImage.bmp").data(), desBufSize);
 }
 
@@ -594,12 +587,12 @@ void Processor::translateImage(char *path) {
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
 
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
 
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+    int factor = imgInfo.infoHeader.biBitCount / 8;
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
-            int factor = imgInfo.infoHeader.biBitCount / 8;
             int newX = j + tx * factor;
             int newY = i + ty;
 
@@ -609,7 +602,14 @@ void Processor::translateImage(char *path) {
             newImage[newY * bmpWidth + newX] = imgInfo.img[i * bmpWidth + j];
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "translatedImage.bmp").data(), imgInfo.imgsize);
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImage, (rootPath + "translatedImage.bmp").data(),
+              imgInfo.imgsize);
+    } else {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "translatedImage.bmp").data(),
+              imgInfo.imgsize);
+
+    }
 }
 
 
@@ -628,9 +628,20 @@ void Processor::mirrorImage(char *path) {
             newImageH[i * bmpWidth + j] = imgInfo.img[i * bmpWidth + (bmpWidth - 1 - j)];
         }
     }
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImageH, (rootPath + "mirrorImageH.bmp").data(),
+              imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImageV, (rootPath + "mirrorImageV.bmp").data(),
+              imgInfo.imgsize);
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, newImageH, (rootPath + "mirrorImageH.bmp").data(), imgInfo.imgsize);
-    write(imgInfo.fileHeader, imgInfo.infoHeader, newImageV, (rootPath + "mirrorImageV.bmp").data(), imgInfo.imgsize);
+    } else {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImageH, (rootPath + "mirrorImageH.bmp").data(),
+              imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImageV, (rootPath + "mirrorImageV.bmp").data(),
+              imgInfo.imgsize);
+
+    }
+
 }
 
 
@@ -717,7 +728,13 @@ void Processor::rotateImage(char *path) {
     resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
 
 
-    write(resFileHeader, resInfoHeader, newImage, (rootPath + "rotated.bmp").data(), size);
+    if(imgInfo.infoHeader.biBitCount == 8){
+        write(resFileHeader, resInfoHeader, imgInfo.pRGB,newImage, (rootPath + "rotated.bmp").data(), size);
+
+    }else{
+        write(resFileHeader, resInfoHeader, newImage, (rootPath + "rotated.bmp").data(), size);
+
+    }
 
 
 }

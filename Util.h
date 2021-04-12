@@ -12,34 +12,34 @@
 #define IMAGEPROCESSOR_UTIL_H
 
 ImageInfo readImage(char *filename) {
-    ImageInfo imginfo;
+    ImageInfo imageInfo;
     FILE *bmp;
     fopen_s(&bmp, filename, "rb");
 
-    fread(&imginfo.fileHeader, sizeof(BITMAPFILEHEADER), 1, bmp);
+    fread(&imageInfo.fileHeader, sizeof(BITMAPFILEHEADER), 1, bmp);
 
-    fread(&imginfo.infoHeader, sizeof(BITMAPINFOHEADER), 1, bmp);
+    fread(&imageInfo.infoHeader, sizeof(BITMAPINFOHEADER), 1, bmp);
 
-    if (imginfo.infoHeader.biBitCount == 8) {
-        fread(&imginfo.pRGB, sizeof(RGBQUAD), 256, bmp);
+    if (imageInfo.infoHeader.biBitCount == 8) {
+        fread(&imageInfo.pRGB, sizeof(RGBQUAD), 256, bmp);
     }
-    int bmpHeight = imginfo.infoHeader.biHeight;
-    int bmpWidth = imginfo.infoHeader.biWidth * imginfo.infoHeader.biBitCount / 8;
+    int bmpHeight = imageInfo.infoHeader.biHeight;
+    int bmpWidth = imageInfo.infoHeader.biWidth * imageInfo.infoHeader.biBitCount / 8;
 
     while (bmpWidth % 4 != 0) {
         bmpWidth++;
     }
-    imginfo.imgsize = bmpHeight * bmpWidth;
+    imageInfo.imgsize = bmpHeight * bmpWidth;
 
-    int bmpOffset = imginfo.fileHeader.bfOffBits;
+    int bmpOffset = imageInfo.fileHeader.bfOffBits;
 
     fseek(bmp, bmpOffset, 0);
 
-    auto *img = new unsigned char[imginfo.imgsize];
-    fread(img, sizeof(unsigned char), imginfo.imgsize, bmp);
-    imginfo.img = img;
+    auto *img = new unsigned char[imageInfo.imgsize];
+    fread(img, sizeof(unsigned char), imageInfo.imgsize, bmp);
+    imageInfo.img = img;
     fclose(bmp);
-    return imginfo;
+    return imageInfo;
 }
 
 void

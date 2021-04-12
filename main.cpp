@@ -18,11 +18,12 @@ int main() {
 
 
 //    Processor::translateImage(path);
-//
 //    Processor::mirrorImage(path);
-//
 //    Processor::rotateImage(path);
 //    Processor::scaleImage(path);
+
+
+
 
 
 
