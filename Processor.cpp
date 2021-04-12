@@ -848,18 +848,46 @@ void Processor::segmentationByIterationFor8(char *path) {
     BYTE *newImage = new BYTE[imgInfo.imgsize];
 
 
-    int value = 0;
+    int value = 127;
+    int curVal = 0;
+
+    vector<int> data1;
+    vector<int> data2;
+
+    while(true){
+        for (int i = 0; i < bmpHeight; ++i) {
+            for (int j = 0; j < bmpWidth; ++j) {
+                int cur = imgInfo.img[i * bmpWidth + j];
+                if(cur < value){
+                    data1.push_back(cur);
+                }else{
+                    data2.push_back(cur);
+                }
+            }
+        }
+        int sum1 = 0;
+        int sum2 = 0;
+        for (auto &item : data1){
+            sum1 += item;
+        }
+        for (auto &item : data2){
+            sum2 += item;
+        }
+        int va1 = sum1 / data1.size();
+        int va2 = sum2 / data2.size();
+
+        curVal = (va1 + va2) / 2;
+        data1.clear();
+        data2.clear();
+        if(curVal - value < 2){
+            break;
+        }else{
+            value = curVal;
+        }
+    }
 
 
-
-
-
-
-
-
-
-
-
+    value = curVal;
 
     Processor::genHistogramWithGivenThreshold(path,value);
     for (int i = 0; i < bmpHeight; i++) {
