@@ -22,8 +22,9 @@ int main() {
 //    Processor::scaleImage(path);
 
 //    Processor::segmentationOnGivenThresholdFor8(path);
-    Processor::segmentationByIterationFor8(path);
+//    Processor::segmentationByIterationFor8(path);
 
+    Processor::segmentationByOTSU(path);
 
 
 

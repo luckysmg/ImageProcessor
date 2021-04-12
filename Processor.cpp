@@ -194,7 +194,7 @@ void Processor::genHistogram(char *path) {
     }
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; j++) {
@@ -258,7 +258,7 @@ void Processor::histogramEqualization(char *path) {
     int data[256] = {0};
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
@@ -345,7 +345,7 @@ void Processor::histogramEqualization(char *path) {
     resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
     write(resFileHeader, resInfoHeader, res, (rootPath + "EqualizationHistogram.bmp").data(), resSize);
 
-    BYTE *resImage = new BYTE[imgInfo.imgsize];
+    BYTE *resImage = new BYTE[imgInfo.imgSize];
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
             int key = imgInfo.img[i * bmpWidth + j];
@@ -353,7 +353,7 @@ void Processor::histogramEqualization(char *path) {
         }
     }
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage, (rootPath + "EqualizationImage.bmp").data(),
-          imgInfo.imgsize);
+          imgInfo.imgSize);
 }
 
 void Processor::averageImage(char *path) {
@@ -465,7 +465,7 @@ void Processor::medianFiltering(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             vector<int> vector;
@@ -502,7 +502,7 @@ void Processor::medianFiltering(char *path) {
         }
     }
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.img, (rootPath + "MedianFiltering.bmp").data(),
-          imgInfo.imgsize);
+          imgInfo.imgSize);
 }
 
 
@@ -510,7 +510,7 @@ void Processor::scaleImage(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int m_nHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
     int m_nWidth = bmpWidth / (imgInfo.infoHeader.biBitCount / 8);
     int num;//记录每一行需要填充的字节
@@ -580,10 +580,10 @@ void Processor::translateImage(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
 
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
+    BYTE *newImage = new BYTE[imgInfo.imgSize];
     int factor = imgInfo.infoHeader.biBitCount / 8;
 
     for (int i = 0; i < bmpHeight; i++) {
@@ -599,10 +599,10 @@ void Processor::translateImage(char *path) {
     }
     if (imgInfo.infoHeader.biBitCount == 8) {
         write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImage, (rootPath + "translatedImage.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
     } else {
         write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "translatedImage.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
 
     }
 }
@@ -612,10 +612,10 @@ void Processor::mirrorImage(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
-    BYTE *newImageV = new BYTE[imgInfo.imgsize];
-    BYTE *newImageH = new BYTE[imgInfo.imgsize];
+    BYTE *newImageV = new BYTE[imgInfo.imgSize];
+    BYTE *newImageH = new BYTE[imgInfo.imgSize];
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
@@ -625,15 +625,15 @@ void Processor::mirrorImage(char *path) {
     }
     if (imgInfo.infoHeader.biBitCount == 8) {
         write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImageH, (rootPath + "mirrorImageH.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
         write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImageV, (rootPath + "mirrorImageV.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
 
     } else {
         write(imgInfo.fileHeader, imgInfo.infoHeader, newImageH, (rootPath + "mirrorImageH.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
         write(imgInfo.fileHeader, imgInfo.infoHeader, newImageV, (rootPath + "mirrorImageV.bmp").data(),
-              imgInfo.imgsize);
+              imgInfo.imgSize);
 
     }
 
@@ -646,7 +646,7 @@ void Processor::rotateImage(char *path) {
     double angle = PI / 4;
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
     int factor = imgInfo.infoHeader.biBitCount / 8;
 
@@ -744,7 +744,7 @@ void Processor::genHistogramWithGivenThreshold(char *path, int value) {
     }
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; j++) {
@@ -817,8 +817,8 @@ void Processor::segmentationOnGivenThresholdFor8(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *newImage = new BYTE[imgInfo.imgSize];
 
     int value = 140;
     Processor::genHistogramWithGivenThreshold(path,value);
@@ -834,9 +834,9 @@ void Processor::segmentationOnGivenThresholdFor8(char *path) {
     }
 
     if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
     }else{
-        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
     }
 }
 
@@ -844,10 +844,8 @@ void Processor::segmentationByIterationFor8(char *path) {
 
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
-    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
-    BYTE *newImage = new BYTE[imgInfo.imgsize];
-
-
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *newImage = new BYTE[imgInfo.imgSize];
     int value = 127;
     int curVal = 0;
 
@@ -902,14 +900,40 @@ void Processor::segmentationByIterationFor8(char *path) {
     }
 
     if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
     }else{
-        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
     }
 
 }
 
 void Processor::segmentationByOTSU(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *newImage = new BYTE[imgInfo.imgSize];
+
+    int value = OtsuThreshold(bmpWidth,bmpHeight,imgInfo.img);
+    cout << value;
+
+    Processor::genHistogramWithGivenThreshold(path,value);
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if(origin > 140){
+                newImage[i * bmpWidth + j] = 255;
+            }else{
+                newImage[i * bmpWidth + j] = 0;
+            }
+        }
+    }
+
+    if(imgInfo.infoHeader.biBitCount == 8){
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    }else{
+        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    }
 
 }
 
