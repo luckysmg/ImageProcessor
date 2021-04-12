@@ -11,6 +11,37 @@
 #ifndef IMAGEPROCESSOR_UTIL_H
 #define IMAGEPROCESSOR_UTIL_H
 
+
+Headers getHeader(int width,int height,int biBitCount,ImageInfo oldInfo){
+
+
+    BITMAPFILEHEADER resFileHeader;
+    BITMAPINFOHEADER resInfoHeader;
+
+    resFileHeader.bfType = 19778;
+    resFileHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    resFileHeader.bfReserved1 = 0;
+    resFileHeader.bfReserved2 = 0;
+    resFileHeader.bfSize = resFileHeader.bfOffBits + width * height;
+
+    resInfoHeader.biSize = 40;
+    resInfoHeader.biWidth = width / (biBitCount / 8);
+    resInfoHeader.biHeight = height;
+    resInfoHeader.biPlanes = 1;
+    resInfoHeader.biBitCount = biBitCount;
+    resInfoHeader.biCompression = oldInfo.infoHeader.biCompression;
+    resInfoHeader.biSizeImage = 0;
+    resInfoHeader.biXPelsPerMeter = 0;
+    resInfoHeader.biYPelsPerMeter = 0;
+    resInfoHeader.biClrUsed = 0;
+    resInfoHeader.biClrImportant = 0;
+
+    Headers headers;
+    headers.infoHeader = resInfoHeader;
+    headers.fileHeader = resFileHeader;
+    return headers;
+}
+
 ImageInfo readImage(char *filename) {
     ImageInfo imageInfo;
     FILE *bmp;
@@ -41,6 +72,7 @@ ImageInfo readImage(char *filename) {
     fclose(bmp);
     return imageInfo;
 }
+
 
 void
 write(BITMAPFILEHEADER fileHeader, BITMAPINFOHEADER infoHeader, unsigned char *img, const char *filename, int size) {

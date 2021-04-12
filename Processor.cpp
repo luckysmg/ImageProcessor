@@ -112,35 +112,30 @@ void Processor::covert24BitImageToGrey(char *path) {
         bmpWidth++;
     }
 
-    if (infoHeader.biBitCount >= 1) {
+    int size = bmpHeight * bmpWidth;
+    BYTE *img = new BYTE[size];
+    BYTE *img1 = new BYTE[size];
 
-        int size = bmpHeight * bmpWidth;
-        BYTE *img = new BYTE[size];
-        BYTE *img1 = new BYTE[size];
+    fseek(file, bmpOffset, 0);
+    fread(img, sizeof(BYTE), size, file);
 
-        fseek(file, bmpOffset, 0);
-        fread(img, sizeof(BYTE), size, file);
-
-        for (int i = 0; i < bmpHeight; i++) {
-            for (int j = 0; j < bmpWidth; j++) {
-                if (j % 2 == 0) {
-                    BYTE res = (img[i * bmpWidth + j] +
-                                img[i * bmpWidth + j - 1] +
-                                img[i * bmpWidth + j - 2]) / 3;
-
-                    img1[i * bmpWidth + j] = res;
-                    img1[i * bmpWidth + j - 1] = res;
-                    img1[i * bmpWidth + j - 2] = res;
-                }
-
-
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; j++) {
+            if (j % 2 == 0) {
+                BYTE res = (img[i * bmpWidth + j] +
+                            img[i * bmpWidth + j - 1] +
+                            img[i * bmpWidth + j - 2]) / 3;
+                img1[i * bmpWidth + j] = res;
+                img1[i * bmpWidth + j - 1] = res;
+                img1[i * bmpWidth + j - 2] = res;
             }
         }
-
-        fwrite(&fileHeader, sizeof(fileHeader), 1, fout);
-        fwrite(&infoHeader, sizeof(infoHeader), 1, fout);
-        fwrite(img1, sizeof(BYTE), size, fout);
     }
+
+    fwrite(&fileHeader, sizeof(fileHeader), 1, fout);
+    fwrite(&infoHeader, sizeof(infoHeader), 1, fout);
+    fwrite(img1, sizeof(BYTE), size, fout);
+
     fclose(file);
     fclose(fout);
 }
@@ -738,3 +733,155 @@ void Processor::rotateImage(char *path) {
 
 
 }
+
+
+
+void Processor::genHistogramWithGivenThreshold(char *path, int value) {
+
+    int data[256];
+    for (int i = 0; i < 256; ++i) {
+        data[i] = 0;
+    }
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; j++) {
+            int key = imgInfo.img[i * bmpWidth + j];
+            data[key] = data[key] + 1;
+        }
+    }
+
+    int maxCount = 0;
+    for (int i = 0; i < 256; ++i) {
+        maxCount = max(maxCount, data[i]);
+    }
+
+    int resWidth = 256 * 3;
+    int resHeight = maxCount;
+    int resSize = resWidth * resHeight;
+    BYTE *res = new BYTE[resSize];
+    for (int i = 0; i < resSize; i++) {
+        res[i] = 255;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        int count = data[i];
+        int cur = 0;
+        while (cur < count) {
+            res[i * 3 + cur * resWidth] = 0;
+            res[i * 3 + cur * resWidth + 1] = 0;
+            res[i * 3 + cur * resWidth + 2] = 0;
+            cur++;
+        }
+    }
+
+    int cur = 0;
+    while (cur < resHeight) {
+        res[value * 3 + cur * resWidth] = 0;
+        res[value * 3 + cur * resWidth + 1] = 0;
+        res[value * 3 + cur * resWidth + 2] = 255;
+        cur++;
+    }
+
+
+    Headers headers = getHeader(resWidth,resHeight,24,imgInfo);
+
+//    BITMAPFILEHEADER resFileHeader;
+//    BITMAPINFOHEADER resInfoHeader;
+//
+//    resFileHeader.bfType = 19778;
+//    resFileHeader.bfOffBits = 54;
+//    resFileHeader.bfReserved1 = 0;
+//    resFileHeader.bfReserved2 = 0;
+//    resFileHeader.bfSize = resFileHeader.bfOffBits + 256 * resHeight * 3;
+//
+//    resInfoHeader.biSize = 40;
+//    resInfoHeader.biWidth = 256;
+//    resInfoHeader.biHeight = resHeight;
+//    resInfoHeader.biPlanes = 1;
+//    resInfoHeader.biBitCount = 24;
+//    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
+//    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
+//    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
+//    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
+//    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
+
+    write(headers.fileHeader, headers.infoHeader, res, (rootPath + "HistogramWithValue.bmp").data(), resSize);
+
+}
+
+
+void Processor::segmentationOnGivenThresholdFor8(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+
+    int value = 140;
+    Processor::genHistogramWithGivenThreshold(path,value);
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if(origin > 140){
+               newImage[i * bmpWidth + j] = 255;
+            }else{
+                newImage[i * bmpWidth + j] = 0;
+            }
+        }
+    }
+
+    if(imgInfo.infoHeader.biBitCount == 8){
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+    }else{
+        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+    }
+}
+
+void Processor::segmentationByIterationFor8(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgsize / imgInfo.infoHeader.biHeight;
+    BYTE *newImage = new BYTE[imgInfo.imgsize];
+
+
+    int value = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+    Processor::genHistogramWithGivenThreshold(path,value);
+    for (int i = 0; i < bmpHeight; i++) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if(origin > 140){
+                newImage[i * bmpWidth + j] = 255;
+            }else{
+                newImage[i * bmpWidth + j] = 0;
+            }
+        }
+    }
+
+    if(imgInfo.infoHeader.biBitCount == 8){
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+    }else{
+        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgsize);
+    }
+
+}
+
+void Processor::segmentationByOTSU(char *path) {
+
+}
+

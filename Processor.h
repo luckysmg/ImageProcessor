@@ -81,6 +81,19 @@ public:
     static void rotateImage(char* path);
 
 
+    ///根据给定的阈值，生成直方图并且标明阈值
+    static void genHistogramWithGivenThreshold(char* path,int value);
+
+    ///给定阈值分割
+    static void segmentationOnGivenThresholdFor8(char* path);
+
+    ///迭代法阈值分割
+    static void segmentationByIterationFor8(char* path);
+
+    ///OTSU法阈值分割
+    static void segmentationByOTSU(char* path);
+
+
 
 
 

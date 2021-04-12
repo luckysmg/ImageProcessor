@@ -56,4 +56,10 @@ typedef struct tagIMGINFO {
 } ImageInfo;
 
 
+typedef struct tagHeaders {
+    BITMAPFILEHEADER fileHeader;
+    BITMAPINFOHEADER infoHeader;
+}Headers;
+
+
 #endif //IMAGEPROCESSOR_MODELS_H
