@@ -3,7 +3,7 @@
 using namespace std;
 
 int main() {
-    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\testhuidu.bmp";
+    char* path = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\divide.bmp";
 
 
 //    Processor::divide24ImageToRGBAndGenImages(path);
@@ -12,19 +12,21 @@ int main() {
 //    Processor::genHistogram(path);
 //    Processor::histogramEqualization(path);
 
-    //Processor::averageImage(path);
-    //Processor::medianFiltering(path);
-
-
+//    Processor::averageImage(path);
+//    Processor::medianFiltering(path);
 //    Processor::translateImage(path);
 //    Processor::mirrorImage(path);
-//    Processor::rotateImage(path);
 //    Processor::scaleImage(path);
-
+//    Processor::rotateImage(path);
 //    Processor::segmentationOnGivenThresholdFor8(path);
 //    Processor::segmentationByIterationFor8(path);
+//
+//    Processor::segmentationByOTSU(path);
 
-    Processor::segmentationByOTSU(path);
+    Processor::segmentImageWithGrow(path);
+
+
+
 
 
 

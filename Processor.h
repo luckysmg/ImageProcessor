@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Models.h"
+#include <vector>
+#include <set>
 
 
 
@@ -36,6 +38,8 @@ private:
 
         return j;
     }
+
+    static void dfs(BYTE *img, int x, int y, int width, int height, int lastVal,set<Point*> vector);
 
 public:
 
@@ -92,6 +96,10 @@ public:
 
     ///OTSU法阈值分割
     static void segmentationByOTSU(char* path);
+
+    ///分割图像（生长）
+    static void segmentImageWithGrow(char* path);
+
 
 
 

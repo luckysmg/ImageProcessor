@@ -61,5 +61,19 @@ typedef struct tagHeaders {
     BITMAPINFOHEADER infoHeader;
 }Headers;
 
+class Point{
+
+public:
+    int x;
+    int y;
+
+    bool operator== (const Point* other) const{
+        if(other->x == this->x && other->y == this->y){
+            return true;
+        }
+        return false;
+    }
+};
+
 
 #endif //IMAGEPROCESSOR_MODELS_H

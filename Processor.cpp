@@ -7,7 +7,6 @@
 #include "Processor.h"
 #include "Util.h"
 #include <algorithm>
-#include <vector>
 #include <unordered_map>
 
 using namespace std;
@@ -936,4 +935,84 @@ void Processor::segmentationByOTSU(char *path) {
     }
 
 }
+
+void Processor::segmentImageWithGrow(char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+
+    //种子图片
+    BYTE *seedsImage = new BYTE[imgInfo.imgSize];
+
+    //生成完成的结果图片
+    BYTE *resImage = new BYTE[imgInfo.imgSize];
+
+    //种子点
+    set<Point*> seeds;
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            //选取种子点,灰度在250以上
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if(origin > 250){
+                auto *p = new Point;
+                p->x = j;
+                p->y = i;
+                seeds.insert(p);
+                seedsImage[i * bmpWidth + j] = 255;
+            }else{
+                seedsImage[i * bmpWidth + j] = 0;
+            }
+        }
+    }
+    //生成种子图片
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,seedsImage, (rootPath + "SegmentationSeedsImage.bmp").data(), imgInfo.imgSize);
+
+
+    //生成的结果种子点
+    set<Point*> growResultPoint;
+    Point *p1 = new Point;
+    p1->x = 2;
+    p1->y = 2;
+    Point *p2 = new Point;
+    p2->x = 2;
+    p2->y = 2;
+    growResultPoint.insert(p1);
+    growResultPoint.insert(p1);
+    cout << growResultPoint.size();
+
+
+    for (auto p :seeds) {
+        growResultPoint.insert(p);
+    }
+
+    for (auto &item : seeds) {
+        int x = item->x;
+        int y = item->y;
+        //dfs(imgInfo.img, x, y, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
+//        dfs(imgInfo.img, x + 1, y - 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
+//        dfs(imgInfo.img, x - 1, y - 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
+//        dfs(imgInfo.img, x - 1, y + 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
+    }
+}
+
+void Processor::dfs(BYTE *img, int x, int y, int width, int height, int lastVal,set<Point*> set) {
+    if(x <= 0 || x >= width - 1 || y <= 0 || y >= height - 1){
+        return;
+    }
+
+    int val = img[y * width + x];
+    //生长条件
+    if(abs(val - lastVal) < 2){
+        Point *p = new Point;
+        p->x = x;
+        p->y = y;
+        set.insert(p);
+
+    }else{
+        //不符合生长条件，返回
+        return;
+    }
+}
+
 
