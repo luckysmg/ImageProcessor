@@ -1,4 +1,5 @@
 #pragma pack(2)
+#pragma comment(linker, "/STACK:1024000000,1024000000")
 #include "Processor.h"
 using namespace std;
 

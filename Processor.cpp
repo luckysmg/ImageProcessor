@@ -938,6 +938,8 @@ void Processor::segmentationByOTSU(char *path) {
 
 void Processor::segmentImageWithGrow(char *path) {
 
+    //divide
+
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
@@ -946,19 +948,19 @@ void Processor::segmentImageWithGrow(char *path) {
     BYTE *seedsImage = new BYTE[imgInfo.imgSize];
 
     //生成完成的结果图片
-    BYTE *resImage = new BYTE[imgInfo.imgSize];
+    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
 
     //种子点
-    set<Point*> seeds;
+    vector<Point> seeds;
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-            //选取种子点,灰度在250以上
+
             int origin = imgInfo.img[i * bmpWidth + j];
             if(origin > 250){
-                auto *p = new Point;
-                p->x = j;
-                p->y = i;
-                seeds.insert(p);
+                Point p;
+                p.x = j;
+                p.y = i;
+                seeds.push_back(p);
                 seedsImage[i * bmpWidth + j] = 255;
             }else{
                 seedsImage[i * bmpWidth + j] = 0;
@@ -969,49 +971,31 @@ void Processor::segmentImageWithGrow(char *path) {
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,seedsImage, (rootPath + "SegmentationSeedsImage.bmp").data(), imgInfo.imgSize);
 
 
-    //生成的结果种子点
-    set<Point*> growResultPoint;
-    Point *p1 = new Point;
-    p1->x = 2;
-    p1->y = 2;
-    Point *p2 = new Point;
-    p2->x = 2;
-    p2->y = 2;
-    growResultPoint.insert(p1);
-    growResultPoint.insert(p1);
-    cout << growResultPoint.size();
-
-
-    for (auto p :seeds) {
-        growResultPoint.insert(p);
-    }
-
     for (auto &item : seeds) {
-        int x = item->x;
-        int y = item->y;
-        //dfs(imgInfo.img, x, y, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
-//        dfs(imgInfo.img, x + 1, y - 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
-//        dfs(imgInfo.img, x - 1, y - 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
-//        dfs(imgInfo.img, x - 1, y + 1, bmpWidth, bmpHeight,imgInfo.img[y * bmpWidth + x] ,growResultPoint);
+        int x = item.x;
+        int y = item.y;
+        resImage[y * bmpWidth + x] = 255;
+        dfs(imgInfo.img,x,y,0,1,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
+        dfs(imgInfo.img,x,y,0,-1,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
+        dfs(imgInfo.img,x,y,1,0,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
+        dfs(imgInfo.img,x,y,-1,0,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
     }
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "SegmentationResultImage.bmp").data(), imgInfo.imgSize);
 }
 
-void Processor::dfs(BYTE *img, int x, int y, int width, int height, int lastVal,set<Point*> set) {
+void Processor::dfs(const BYTE *img, int x, int y, int dx,int dy,int width, int height, int lastVal,BYTE* res) {
     if(x <= 0 || x >= width - 1 || y <= 0 || y >= height - 1){
         return;
     }
 
     int val = img[y * width + x];
-    //生长条件
-    if(abs(val - lastVal) < 2){
-        Point *p = new Point;
-        p->x = x;
-        p->y = y;
-        set.insert(p);
 
-    }else{
-        //不符合生长条件，返回
-        return;
+    //生长条件
+    if(abs(val - lastVal) < 10){
+        res[y * width + x] = 255;
+        //周围进行找路径
+        dfs(img, x + dx, y + dy, dx,dy,width, height,val ,res);
     }
 }
 

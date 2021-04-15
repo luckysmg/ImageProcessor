@@ -39,7 +39,7 @@ private:
         return j;
     }
 
-    static void dfs(BYTE *img, int x, int y, int width, int height, int lastVal,set<Point*> vector);
+    static void dfs(const BYTE *img, int x, int y,int dx,int dy, int width, int height, int lastVal,BYTE* res);
 
 public:
 
