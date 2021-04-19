@@ -949,4 +949,86 @@ void Processor::dfs(const BYTE *img, int x, int y, int dx,int dy,int width, int 
     }
 }
 
+void Processor::edgeDetectByPrewitt(const char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+                continue;
+            }
+
+            int dx = imgInfo.img[(i - 1) * bmpWidth + j - 1] + imgInfo.img[(i - 1) * bmpWidth + j] +
+                    imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1]
+                    - imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[(i + 1) * bmpWidth + j + 1];
+
+            int dy = imgInfo.img[(i + 1) * bmpWidth + j + 1] + imgInfo.img[i * bmpWidth + j + 1] +
+                    imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1] -
+                    imgInfo.img[i * bmpWidth + j - 1] - imgInfo.img[(i - 1) * bmpWidth + j - 1];
+
+            int val = (int)sqrt(dx * dx + dy * dy);
+            resImage[i * bmpWidth + j] = val;
+
+        }
+    }
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+}
+
+void Processor::edgeDetectBySobel(const char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+                continue;
+            }
+
+            int dx = imgInfo.img[(i - 1) * bmpWidth + j - 1] + 2 * imgInfo.img[(i - 1) * bmpWidth + j] +
+                     imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1]
+                     - 2 * imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[(i + 1) * bmpWidth + j + 1];
+
+            int dy = imgInfo.img[(i + 1) * bmpWidth + j + 1] + 2 * imgInfo.img[i * bmpWidth + j + 1] +
+                     imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1] -
+                     2 * imgInfo.img[i * bmpWidth + j - 1] - imgInfo.img[(i - 1) * bmpWidth + j - 1];
+
+            int val = (int)sqrt(dx * dx + dy * dy);
+            resImage[i * bmpWidth + j] = val;
+
+        }
+    }
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+
+}
+
+void Processor::edgeDetectByLOG(const char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+                continue;
+            }
+
+
+        }
+    }
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+
+}
+
 

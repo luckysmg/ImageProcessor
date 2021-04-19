@@ -25,13 +25,20 @@ int main() {
 //    Processor::scaleImage(getPath("lena.bmp"));
 //    Processor::rotateImage(getPath("lena.bmp"));
 
-
-
 //    Processor::segmentationOnGivenThresholdFor8(getPath("testhuidu.bmp"));
 //    Processor::segmentationByIterationFor8(getPath("testhuidu.bmp"));
 //    Processor::segmentationByOTSU(getPath("testhuidu.bmp"));
 
 //    Processor::segmentImageWithGrow(getPath("divide.bmp"));
+
+
+
+//    Processor::edgeDetectByPrewitt(getPath("lena.bmp"));
+//    Processor::edgeDetectBySobel(getPath("lena.bmp"));
+    Processor::edgeDetectByLOG(getPath("lena.bmp"));
+
+
+
 
     return 0;
 }

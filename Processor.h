@@ -101,6 +101,16 @@ public:
     static void segmentImageWithGrow(const char* path);
 
 
+    ///基于Prewitt来做边缘检测
+    static void edgeDetectByPrewitt(const char* path);
+
+    ///基于Sobel来做边缘检测
+    static void edgeDetectBySobel(const char* path);
+
+    ///基于LOG来做边缘检测
+    static void edgeDetectByLOG(const char* path);
+
+
 
 
 
