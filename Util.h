@@ -42,7 +42,7 @@ Headers getHeader(int width,int height,int biBitCount,ImageInfo oldInfo){
     return headers;
 }
 
-ImageInfo readImage(char *filename) {
+ImageInfo readImage(const char *filename) {
     ImageInfo imageInfo;
     FILE *bmp;
     fopen_s(&bmp, filename, "rb");

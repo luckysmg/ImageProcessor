@@ -46,59 +46,59 @@ public:
 
     ///*****第一次*******
     ///将图片RGB分离，并且生成三张新的图片
-    static void divide24ImageToRGBAndGenImages(char* path);
+    static void divide24ImageToRGBAndGenImages(const char* path);
 
     ///24位彩色图像灰度化
-    static void covert24BitImageToGrey(char* path);
+    static void covert24BitImageToGrey(const char* path);
 
     ///反色
-    static void convertColor(char* path);
+    static void convertColor(const char* path);
 
 
     ///*****第二次*******
     ///生成直方图
-    static void genHistogram(char* path);
+    static void genHistogram(const char* path);
 
     ///直方图均衡化
-    static void histogramEqualization(char* path);
+    static void histogramEqualization(const char* path);
 
 
     ///*****第三次*******
 
     ///平均处理（基于模板卷积运算）
-    static void averageImage(char* path);
+    static void averageImage(const char* path);
 
     ///中值滤波
-    static void medianFiltering(char* path);
+    static void medianFiltering(const char* path);
 
     ///图像缩放
-    static void scaleImage(char* path);
+    static void scaleImage(const char* path);
 
 
     ///图像平移
-    static void translateImage(char* path);
+    static void translateImage(const char* path);
 
     ///图像镜像
-    static void mirrorImage(char* path);
+    static void mirrorImage(const char* path);
 
     ///图像旋转
-    static void rotateImage(char* path);
+    static void rotateImage(const char* path);
 
 
     ///根据给定的阈值，生成直方图并且标明阈值
-    static void genHistogramWithGivenThreshold(char* path,int value);
+    static void genHistogramWithGivenThreshold(const char* path,int value);
 
     ///给定阈值分割
-    static void segmentationOnGivenThresholdFor8(char* path);
+    static void segmentationOnGivenThresholdFor8(const char* path);
 
     ///迭代法阈值分割
-    static void segmentationByIterationFor8(char* path);
+    static void segmentationByIterationFor8(const char* path);
 
     ///OTSU法阈值分割
-    static void segmentationByOTSU(char* path);
+    static void segmentationByOTSU(const char* path);
 
     ///分割图像（生长）
-    static void segmentImageWithGrow(char* path);
+    static void segmentImageWithGrow(const char* path);
 
 
 
