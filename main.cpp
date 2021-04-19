@@ -35,7 +35,7 @@ int main() {
 
 //    Processor::edgeDetectByPrewitt(getPath("lena.bmp"));
 //    Processor::edgeDetectBySobel(getPath("lena.bmp"));
-    Processor::edgeDetectByLOG(getPath("lena.bmp"));
+//    Processor::edgeDetectByLOG(getPath("lena.bmp"));
 
 
 

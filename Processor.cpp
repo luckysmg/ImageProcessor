@@ -976,7 +976,7 @@ void Processor::edgeDetectByPrewitt(const char *path) {
 
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImagePrewitt.bmp").data(), imgInfo.imgSize);
 }
 
 void Processor::edgeDetectBySobel(const char *path) {
@@ -1006,7 +1006,7 @@ void Processor::edgeDetectBySobel(const char *path) {
 
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImageSobel.bmp").data(), imgInfo.imgSize);
 
 }
 
@@ -1015,7 +1015,7 @@ void Processor::edgeDetectByLOG(const char *path) {
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
-    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+    BYTE *resImage = new BYTE[imgInfo.imgSize];
 
 
     for (int i = 0; i < bmpHeight; ++i) {
@@ -1024,10 +1024,15 @@ void Processor::edgeDetectByLOG(const char *path) {
                 continue;
             }
 
-
+            int val = 4 * imgInfo.img[i * bmpWidth + j] - imgInfo.img[ (i - 1) * bmpWidth + j] -
+                    imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[i * bmpWidth + j + 1] -
+                    imgInfo.img[i * bmpWidth + j - 1];
+            if(val < 0)val = 0;
+            if(val > 255)val = 255;
+            resImage[i * bmpWidth + j] = val;
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectLogImage.bmp").data(), imgInfo.imgSize);
 
 }
 
