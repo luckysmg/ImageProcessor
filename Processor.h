@@ -110,6 +110,10 @@ public:
     ///基于LOG来做边缘检测
     static void edgeDetectByLOG(const char* path);
 
+    ///直线检测
+    static void lineDetect(const char* path);
+
+
 
 
 

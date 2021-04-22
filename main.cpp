@@ -29,13 +29,17 @@ int main() {
 //    Processor::segmentationByIterationFor8(getPath("testhuidu.bmp"));
 //    Processor::segmentationByOTSU(getPath("testhuidu.bmp"));
 
+
+     ///
+
+
 //    Processor::segmentImageWithGrow(getPath("divide.bmp"));
-
-
-
 //    Processor::edgeDetectByPrewitt(getPath("lena.bmp"));
 //    Processor::edgeDetectBySobel(getPath("lena.bmp"));
 //    Processor::edgeDetectByLOG(getPath("lena.bmp"));
+
+
+    Processor::lineDetect(getPath("testline.bmp"));
 
 
 

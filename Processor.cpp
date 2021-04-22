@@ -774,7 +774,7 @@ void Processor::segmentationOnGivenThresholdFor8(const char *path) {
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int origin = imgInfo.img[i * bmpWidth + j];
-            if(origin > 140){
+            if(origin > value){
                newImage[i * bmpWidth + j] = 255;
             }else{
                 newImage[i * bmpWidth + j] = 0;
@@ -1034,6 +1034,23 @@ void Processor::edgeDetectByLOG(const char *path) {
     }
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectLogImage.bmp").data(), imgInfo.imgSize);
 
+}
+
+void Processor::lineDetect(const char *path) {
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    BYTE *resImage = new BYTE[imgInfo.imgSize];
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+
+        }
+    }
+
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectLogImage.bmp").data(), imgInfo.imgSize);
 }
 
 
