@@ -1041,16 +1041,65 @@ void Processor::lineDetect(const char *path) {
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
-    BYTE *resImage = new BYTE[imgInfo.imgSize];
 
+    //二值化
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-
+            if(imgInfo.img[i *bmpWidth + j] > 140){
+                imgInfo.img[i * bmpWidth + j] = 255;
+            }else{
+                imgInfo.img[i * bmpWidth + j] = 0;
+            }
         }
     }
 
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectLogImage.bmp").data(), imgInfo.imgSize);
+    //斜率是-99 ~ 100，截距是-99 ~ 100
+    int data[200][200]{0};
+    int diff = 99;
+
+
+
+    int sum = 0;
+
+    cout << sum << endl;
+
+    for (int y = 0; y < bmpHeight; ++y) {
+        for (int x = 0; x < bmpWidth; ++x) {
+            if(imgInfo.img[y * bmpWidth + x] == 255){
+                continue;
+            }
+
+            for (int k = -99; k  <= 100; ++k) {
+                for (int b = -99; b <= 100; ++b) {
+                   if(y == k * x + b){
+                       data[k + diff][b + diff] += 1;
+                   }
+                }
+            }
+        }
+    }
+
+    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+
+    for (int k = 0; k < 200; ++k) {
+        for (int b = 0; b < 200; ++b) {
+            if(data[k][b] >= 10){
+
+                for (int y = 0; y < bmpHeight; ++y) {
+                    for (int x = 0; x < bmpWidth; ++x) {
+                        int ak = k - diff;
+                        int ab = b - diff;
+                        if(y == ak * x + ab){
+                          resImage[y * bmpWidth + x] = 255;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "lineDetectImage.bmp").data(), imgInfo.imgSize);
 }
 
 
