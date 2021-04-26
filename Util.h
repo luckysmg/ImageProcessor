@@ -12,7 +12,7 @@
 #define IMAGEPROCESSOR_UTIL_H
 
 
-Headers getHeader(int width,int height,int biBitCount,ImageInfo oldInfo){
+Headers getHeader(int width,int height,int biBitCount){
 
 
     BITMAPFILEHEADER resFileHeader;
@@ -29,7 +29,7 @@ Headers getHeader(int width,int height,int biBitCount,ImageInfo oldInfo){
     resInfoHeader.biHeight = height;
     resInfoHeader.biPlanes = 1;
     resInfoHeader.biBitCount = biBitCount;
-    resInfoHeader.biCompression = oldInfo.infoHeader.biCompression;
+    resInfoHeader.biCompression = 0;
     resInfoHeader.biSizeImage = 0;
     resInfoHeader.biXPelsPerMeter = 0;
     resInfoHeader.biYPelsPerMeter = 0;

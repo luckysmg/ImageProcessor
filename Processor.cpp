@@ -735,27 +735,7 @@ void Processor::genHistogramWithGivenThreshold(const char *path, int value) {
     }
 
 
-    Headers headers = getHeader(resWidth,resHeight,24,imgInfo);
-
-//    BITMAPFILEHEADER resFileHeader;
-//    BITMAPINFOHEADER resInfoHeader;
-//
-//    resFileHeader.bfType = 19778;
-//    resFileHeader.bfOffBits = 54;
-//    resFileHeader.bfReserved1 = 0;
-//    resFileHeader.bfReserved2 = 0;
-//    resFileHeader.bfSize = resFileHeader.bfOffBits + 256 * resHeight * 3;
-//
-//    resInfoHeader.biSize = 40;
-//    resInfoHeader.biWidth = 256;
-//    resInfoHeader.biHeight = resHeight;
-//    resInfoHeader.biPlanes = 1;
-//    resInfoHeader.biBitCount = 24;
-//    resInfoHeader.biCompression = imgInfo.infoHeader.biCompression;
-//    resInfoHeader.biSizeImage = resInfoHeader.biWidth * resInfoHeader.biHeight * resInfoHeader.biBitCount;
-//    resInfoHeader.biYPelsPerMeter = imgInfo.infoHeader.biYPelsPerMeter;
-//    resInfoHeader.biClrUsed = imgInfo.infoHeader.biClrUsed;
-//    resInfoHeader.biClrImportant = imgInfo.infoHeader.biClrImportant;
+    Headers headers = getHeader(resWidth,resHeight,24);
 
     write(headers.fileHeader, headers.infoHeader, res, (rootPath + "HistogramWithValue.bmp").data(), resSize);
 
@@ -1006,6 +986,7 @@ void Processor::edgeDetectBySobel(const char *path) {
 
         }
     }
+
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImageSobel.bmp").data(), imgInfo.imgSize);
 
 }
@@ -1058,8 +1039,6 @@ void Processor::lineDetect(const char *path) {
     int data[200][200]{0};
     int diff = 99;
 
-
-
     int sum = 0;
 
     cout << sum << endl;
@@ -1100,6 +1079,25 @@ void Processor::lineDetect(const char *path) {
     }
 
     write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "lineDetectImage.bmp").data(), imgInfo.imgSize);
+}
+
+void Processor::connectedDomainAnalysis(const char *path) {
+
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+    cout << imgInfo.infoHeader.biCompression << endl;
+
+
+    ///序贯标记
+
+}
+
+void Processor::contourExtraction(const char *path) {
+
+    ///轮廓提取
+
 }
 
 

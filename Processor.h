@@ -114,6 +114,14 @@ public:
     static void lineDetect(const char* path);
 
 
+    ///连通域分析
+    static void connectedDomainAnalysis(const char* path);
+
+
+    ///轮廓提取
+    static void contourExtraction(const char* path);
+
+
 
 
 
