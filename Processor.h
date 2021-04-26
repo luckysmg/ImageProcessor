@@ -41,7 +41,11 @@ private:
 
     static void dfs(const BYTE *img, int x, int y,int dx,int dy, int width, int height, int lastVal,BYTE* res);
 
+    static void dfs(const BYTE *img,BYTE* flags,int x,int y,int width,int last);
+
+
 public:
+
 
 
     ///*****第一次*******

@@ -25,7 +25,7 @@ int main() {
 //    Processor::scaleImage(getPath("lena.bmp"));
 //    Processor::rotateImage(getPath("lena.bmp"));
 
-//    Processor::segmentationOnGivenThresholdFor8(getPath("testline.bmp"));
+//    Processor::segmentationOnGivenThresholdFor8(getPath("testhuidu.bmp"));
 //    Processor::segmentationByIterationFor8(getPath("testhuidu.bmp"));
 //    Processor::segmentationByOTSU(getPath("testhuidu.bmp"));
 
@@ -42,7 +42,9 @@ int main() {
 //    Processor::lineDetect(getPath("testline.bmp"));
 
 
-    Processor::connectedDomainAnalysis(getPath("testline.bmp"));
+
+//    Processor::connectedDomainAnalysis(getPath("area.bmp"));
+    Processor::contourExtraction(getPath("area.bmp"));
 
 
 

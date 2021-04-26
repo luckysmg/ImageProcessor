@@ -12,8 +12,7 @@
 using namespace std;
 
 
-
-void Processor::divide24ImageToRGBAndGenImages(const char* path) {
+void Processor::divide24ImageToRGBAndGenImages(const char *path) {
 
     FILE *file = fopen(path, "rb");
     FILE *pfoutr = fopen((rootPath + "r.bmp").data(), "wb");
@@ -353,10 +352,11 @@ void Processor::histogramEqualization(const char *path) {
     }
 
 
-    if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader,imgInfo.infoHeader,imgInfo.pRGB, resImage, (rootPath + "EqualizationImage.bmp").data(),
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage,
+              (rootPath + "EqualizationImage.bmp").data(),
               imgInfo.imgSize);
-    }else{
+    } else {
         write(imgInfo.fileHeader, imgInfo.infoHeader, resImage, (rootPath + "EqualizationImage.bmp").data(),
               imgInfo.imgSize);
     }
@@ -573,12 +573,15 @@ void Processor::scaleImage(const char *path) {
             int tXN = int(j / scale);
             int tYN = int(i / scale);
             //值拷贝
-            ImageSize[(i * desWidth + j) * factor + i * num1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor + tYN * num];
-            ImageSize[(i * desWidth + j) * factor + i * num1 + 1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor + tYN * num + 1];
-            ImageSize[(i * desWidth + j) * factor + i * num1 + 2] = imgInfo.img[(tYN * m_nWidth + tXN) * factor + tYN * num + 2];
+            ImageSize[(i * desWidth + j) * factor + i * num1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+                                                                            tYN * num];
+            ImageSize[(i * desWidth + j) * factor + i * num1 + 1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+                                                                                tYN * num + 1];
+            ImageSize[(i * desWidth + j) * factor + i * num1 + 2] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+                                                                                tYN * num + 2];
         }
     }
-    write(fileHeader, infoHeader, imgInfo.pRGB,ImageSize, (rootPath + "scaledImage.bmp").data(), desBufSize);
+    write(fileHeader, infoHeader, imgInfo.pRGB, ImageSize, (rootPath + "scaledImage.bmp").data(), desBufSize);
 }
 
 void Processor::translateImage(const char *path) {
@@ -661,12 +664,12 @@ void Processor::rotateImage(const char *path) {
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
 
-            double x = (double)j * cos(angle) + (double)i * sin(angle);
-            double y = (double)-j * sin(angle) + (double)i * cos(angle);
-            int newX = (int)x;
-            int newY = (int)y;
+            double x = (double) j * cos(angle) + (double) i * sin(angle);
+            double y = (double) -j * sin(angle) + (double) i * cos(angle);
+            int newX = (int) x;
+            int newY = (int) y;
 
-            if(newX < 0 || newX >= bmpWidth || newY < 0 || newY >= bmpHeight){
+            if (newX < 0 || newX >= bmpWidth || newY < 0 || newY >= bmpHeight) {
                 continue;
             }
             newImage[newY * bmpWidth + newX] = imgInfo.img[i * bmpWidth + j];
@@ -682,7 +685,6 @@ void Processor::rotateImage(const char *path) {
               imgInfo.imgSize);
     }
 }
-
 
 
 void Processor::genHistogramWithGivenThreshold(const char *path, int value) {
@@ -735,7 +737,7 @@ void Processor::genHistogramWithGivenThreshold(const char *path, int value) {
     }
 
 
-    Headers headers = getHeader(resWidth,resHeight,24);
+    Headers headers = getHeader(resWidth, resHeight, 24);
 
     write(headers.fileHeader, headers.infoHeader, res, (rootPath + "HistogramWithValue.bmp").data(), resSize);
 
@@ -750,22 +752,24 @@ void Processor::segmentationOnGivenThresholdFor8(const char *path) {
     BYTE *newImage = new BYTE[imgInfo.imgSize];
 
     int value = 140;
-    Processor::genHistogramWithGivenThreshold(path,value);
+    Processor::genHistogramWithGivenThreshold(path, value);
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int origin = imgInfo.img[i * bmpWidth + j];
-            if(origin > value){
-               newImage[i * bmpWidth + j] = 255;
-            }else{
+            if (origin > value) {
+                newImage[i * bmpWidth + j] = 255;
+            } else {
                 newImage[i * bmpWidth + j] = 0;
             }
         }
     }
 
-    if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
-    }else{
-        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImage,
+              (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    } else {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "SegmentationImage.bmp").data(),
+              imgInfo.imgSize);
     }
 }
 
@@ -781,23 +785,23 @@ void Processor::segmentationByIterationFor8(const char *path) {
     vector<int> data1;
     vector<int> data2;
 
-    while(true){
+    while (true) {
         for (int i = 0; i < bmpHeight; ++i) {
             for (int j = 0; j < bmpWidth; ++j) {
                 int cur = imgInfo.img[i * bmpWidth + j];
-                if(cur < value){
+                if (cur < value) {
                     data1.push_back(cur);
-                }else{
+                } else {
                     data2.push_back(cur);
                 }
             }
         }
         int sum1 = 0;
         int sum2 = 0;
-        for (auto &item : data1){
+        for (auto &item : data1) {
             sum1 += item;
         }
-        for (auto &item : data2){
+        for (auto &item : data2) {
             sum2 += item;
         }
         int va1 = sum1 / data1.size();
@@ -806,9 +810,9 @@ void Processor::segmentationByIterationFor8(const char *path) {
         curVal = (va1 + va2) / 2;
         data1.clear();
         data2.clear();
-        if(curVal - value < 2){
+        if (curVal - value < 2) {
             break;
-        }else{
+        } else {
             value = curVal;
         }
     }
@@ -816,22 +820,24 @@ void Processor::segmentationByIterationFor8(const char *path) {
 
     value = curVal;
 
-    Processor::genHistogramWithGivenThreshold(path,value);
+    Processor::genHistogramWithGivenThreshold(path, value);
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int origin = imgInfo.img[i * bmpWidth + j];
-            if(origin > 140){
+            if (origin > 140) {
                 newImage[i * bmpWidth + j] = 255;
-            }else{
+            } else {
                 newImage[i * bmpWidth + j] = 0;
             }
         }
     }
 
-    if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
-    }else{
-        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImage,
+              (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    } else {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "SegmentationImage.bmp").data(),
+              imgInfo.imgSize);
     }
 
 }
@@ -843,25 +849,27 @@ void Processor::segmentationByOTSU(const char *path) {
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
     BYTE *newImage = new BYTE[imgInfo.imgSize];
 
-    int value = OtsuThreshold(bmpWidth,bmpHeight,imgInfo.img);
+    int value = OtsuThreshold(bmpWidth, bmpHeight, imgInfo.img);
     cout << value;
 
-    Processor::genHistogramWithGivenThreshold(path,value);
+    Processor::genHistogramWithGivenThreshold(path, value);
     for (int i = 0; i < bmpHeight; i++) {
         for (int j = 0; j < bmpWidth; ++j) {
             int origin = imgInfo.img[i * bmpWidth + j];
-            if(origin > 140){
+            if (origin > 140) {
                 newImage[i * bmpWidth + j] = 255;
-            }else{
+            } else {
                 newImage[i * bmpWidth + j] = 0;
             }
         }
     }
 
-    if(imgInfo.infoHeader.biBitCount == 8){
-        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
-    }else{
-        write(imgInfo.fileHeader, imgInfo.infoHeader,newImage, (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    if (imgInfo.infoHeader.biBitCount == 8) {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, newImage,
+              (rootPath + "SegmentationImage.bmp").data(), imgInfo.imgSize);
+    } else {
+        write(imgInfo.fileHeader, imgInfo.infoHeader, newImage, (rootPath + "SegmentationImage.bmp").data(),
+              imgInfo.imgSize);
     }
 
 }
@@ -886,46 +894,48 @@ void Processor::segmentImageWithGrow(const char *path) {
         for (int j = 0; j < bmpWidth; ++j) {
 
             int origin = imgInfo.img[i * bmpWidth + j];
-            if(origin > 250){
+            if (origin > 250) {
                 Point p;
                 p.x = j;
                 p.y = i;
                 seeds.push_back(p);
                 seedsImage[i * bmpWidth + j] = 255;
-            }else{
+            } else {
                 seedsImage[i * bmpWidth + j] = 0;
             }
         }
     }
     //生成种子图片
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,seedsImage, (rootPath + "SegmentationSeedsImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, seedsImage,
+          (rootPath + "SegmentationSeedsImage.bmp").data(), imgInfo.imgSize);
 
 
     for (auto &item : seeds) {
         int x = item.x;
         int y = item.y;
         resImage[y * bmpWidth + x] = 255;
-        dfs(imgInfo.img,x,y,0,1,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
-        dfs(imgInfo.img,x,y,0,-1,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
-        dfs(imgInfo.img,x,y,1,0,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
-        dfs(imgInfo.img,x,y,-1,0,bmpWidth,bmpHeight,imgInfo.img[y * bmpWidth + x],resImage);
+        dfs(imgInfo.img, x, y, 0, 1, bmpWidth, bmpHeight, imgInfo.img[y * bmpWidth + x], resImage);
+        dfs(imgInfo.img, x, y, 0, -1, bmpWidth, bmpHeight, imgInfo.img[y * bmpWidth + x], resImage);
+        dfs(imgInfo.img, x, y, 1, 0, bmpWidth, bmpHeight, imgInfo.img[y * bmpWidth + x], resImage);
+        dfs(imgInfo.img, x, y, -1, 0, bmpWidth, bmpHeight, imgInfo.img[y * bmpWidth + x], resImage);
     }
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "SegmentationResultImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage,
+          (rootPath + "SegmentationResultImage.bmp").data(), imgInfo.imgSize);
 }
 
-void Processor::dfs(const BYTE *img, int x, int y, int dx,int dy,int width, int height, int lastVal,BYTE* res) {
-    if(x <= 0 || x >= width - 1 || y <= 0 || y >= height - 1){
+void Processor::dfs(const BYTE *img, int x, int y, int dx, int dy, int width, int height, int lastVal, BYTE *res) {
+    if (x <= 0 || x >= width - 1 || y <= 0 || y >= height - 1) {
         return;
     }
 
     int val = img[y * width + x];
 
     //生长条件
-    if(abs(val - lastVal) < 10){
+    if (abs(val - lastVal) < 10) {
         res[y * width + x] = 255;
         //周围进行找路径
-        dfs(img, x + dx, y + dy, dx,dy,width, height,val ,res);
+        dfs(img, x + dx, y + dy, dx, dy, width, height, val, res);
     }
 }
 
@@ -939,24 +949,25 @@ void Processor::edgeDetectByPrewitt(const char *path) {
 
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+            if (i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1) {
                 continue;
             }
 
             int dx = imgInfo.img[(i - 1) * bmpWidth + j - 1] + imgInfo.img[(i - 1) * bmpWidth + j] +
-                    imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1]
-                    - imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[(i + 1) * bmpWidth + j + 1];
+                     imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1]
+                     - imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[(i + 1) * bmpWidth + j + 1];
 
             int dy = imgInfo.img[(i + 1) * bmpWidth + j + 1] + imgInfo.img[i * bmpWidth + j + 1] +
-                    imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1] -
-                    imgInfo.img[i * bmpWidth + j - 1] - imgInfo.img[(i - 1) * bmpWidth + j - 1];
+                     imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1] -
+                     imgInfo.img[i * bmpWidth + j - 1] - imgInfo.img[(i - 1) * bmpWidth + j - 1];
 
-            int val = (int)sqrt(dx * dx + dy * dy);
+            int val = (int) sqrt(dx * dx + dy * dy);
             resImage[i * bmpWidth + j] = val;
 
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImagePrewitt.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage,
+          (rootPath + "edgeDetectImagePrewitt.bmp").data(), imgInfo.imgSize);
 }
 
 void Processor::edgeDetectBySobel(const char *path) {
@@ -969,7 +980,7 @@ void Processor::edgeDetectBySobel(const char *path) {
 
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+            if (i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1) {
                 continue;
             }
 
@@ -981,13 +992,14 @@ void Processor::edgeDetectBySobel(const char *path) {
                      imgInfo.img[(i - 1) * bmpWidth + j + 1] - imgInfo.img[(i + 1) * bmpWidth + j - 1] -
                      2 * imgInfo.img[i * bmpWidth + j - 1] - imgInfo.img[(i - 1) * bmpWidth + j - 1];
 
-            int val = (int)sqrt(dx * dx + dy * dy);
+            int val = (int) sqrt(dx * dx + dy * dy);
             resImage[i * bmpWidth + j] = val;
 
         }
     }
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectImageSobel.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage,
+          (rootPath + "edgeDetectImageSobel.bmp").data(), imgInfo.imgSize);
 
 }
 
@@ -1001,19 +1013,20 @@ void Processor::edgeDetectByLOG(const char *path) {
 
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-            if(i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1){
+            if (i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1) {
                 continue;
             }
 
-            int val = 4 * imgInfo.img[i * bmpWidth + j] - imgInfo.img[ (i - 1) * bmpWidth + j] -
-                    imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[i * bmpWidth + j + 1] -
-                    imgInfo.img[i * bmpWidth + j - 1];
-            if(val < 0)val = 0;
-            if(val > 255)val = 255;
+            int val = 4 * imgInfo.img[i * bmpWidth + j] - imgInfo.img[(i - 1) * bmpWidth + j] -
+                      imgInfo.img[(i + 1) * bmpWidth + j] - imgInfo.img[i * bmpWidth + j + 1] -
+                      imgInfo.img[i * bmpWidth + j - 1];
+            if (val < 0)val = 0;
+            if (val > 255)val = 255;
             resImage[i * bmpWidth + j] = val;
         }
     }
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "edgeDetectLogImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage, (rootPath + "edgeDetectLogImage.bmp").data(),
+          imgInfo.imgSize);
 
 }
 
@@ -1026,9 +1039,9 @@ void Processor::lineDetect(const char *path) {
     //二值化
     for (int i = 0; i < bmpHeight; ++i) {
         for (int j = 0; j < bmpWidth; ++j) {
-            if(imgInfo.img[i *bmpWidth + j] > 140){
+            if (imgInfo.img[i * bmpWidth + j] > 140) {
                 imgInfo.img[i * bmpWidth + j] = 255;
-            }else{
+            } else {
                 imgInfo.img[i * bmpWidth + j] = 0;
             }
         }
@@ -1045,15 +1058,15 @@ void Processor::lineDetect(const char *path) {
 
     for (int y = 0; y < bmpHeight; ++y) {
         for (int x = 0; x < bmpWidth; ++x) {
-            if(imgInfo.img[y * bmpWidth + x] == 255){
+            if (imgInfo.img[y * bmpWidth + x] == 255) {
                 continue;
             }
 
-            for (int k = -99; k  <= 100; ++k) {
+            for (int k = -99; k <= 100; ++k) {
                 for (int b = -99; b <= 100; ++b) {
-                   if(y == k * x + b){
-                       data[k + diff][b + diff] += 1;
-                   }
+                    if (y == k * x + b) {
+                        data[k + diff][b + diff] += 1;
+                    }
                 }
             }
         }
@@ -1063,14 +1076,14 @@ void Processor::lineDetect(const char *path) {
 
     for (int k = 0; k < 200; ++k) {
         for (int b = 0; b < 200; ++b) {
-            if(data[k][b] >= 10){
+            if (data[k][b] >= 10) {
 
                 for (int y = 0; y < bmpHeight; ++y) {
                     for (int x = 0; x < bmpWidth; ++x) {
                         int ak = k - diff;
                         int ab = b - diff;
-                        if(y == ak * x + ab){
-                          resImage[y * bmpWidth + x] = 255;
+                        if (y == ak * x + ab) {
+                            resImage[y * bmpWidth + x] = 255;
                         }
                     }
                 }
@@ -1078,7 +1091,8 @@ void Processor::lineDetect(const char *path) {
         }
     }
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB,resImage, (rootPath + "lineDetectImage.bmp").data(), imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage, (rootPath + "lineDetectImage.bmp").data(),
+          imgInfo.imgSize);
 }
 
 void Processor::connectedDomainAnalysis(const char *path) {
@@ -1087,16 +1101,123 @@ void Processor::connectedDomainAnalysis(const char *path) {
     ImageInfo imgInfo = readImage(path);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
-    cout << imgInfo.infoHeader.biCompression << endl;
 
+    //二值化
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if (origin > 240) {
+                imgInfo.img[i * bmpWidth + j] = 255;
+            } else {
+                imgInfo.img[i * bmpWidth + j] = 0;
+            }
+        }
+    }
 
-    ///序贯标记
+    //标记数组
+    BYTE *flags = new BYTE[imgInfo.imgSize]{0};
 
+    //递归标记
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            dfs(imgInfo.img, flags, j, i, bmpWidth, imgInfo.img[i * bmpWidth + j]);
+        }
+    }
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            if (flags[i * bmpWidth + j] == 1) {
+                imgInfo.img[i * bmpWidth + j] = 140;
+            }
+        }
+    }
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, imgInfo.img,
+          (rootPath + "connectedDomainAnalysisImage.bmp").data(), imgInfo.imgSize);
+}
+
+void Processor::dfs(const BYTE *img, BYTE *flags, int x, int y, int width, int last) {
+    //如果已经标记了，或者是白色的无效区域，返回
+    if (flags[y * width + x] != 0 || img[y * width + x] == 255) {
+        return;
+    }
+    int cur = img[y * width + x];
+    //如果灰度相同,进行标记,并且在周围进行寻找标记
+    if (cur == last) {
+        flags[y * width + x] = 1;
+        dfs(img, flags, x + 1, y, width, cur);
+        dfs(img, flags, x - 1, y, width, cur);
+        dfs(img, flags, x, y + 1, width, cur);
+        dfs(img, flags, x, y - 1, width, cur);
+    }
 }
 
 void Processor::contourExtraction(const char *path) {
 
     ///轮廓提取
+
+    ImageInfo imgInfo = readImage(path);
+    int bmpHeight = imgInfo.infoHeader.biHeight;
+    int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
+
+
+    //二值化
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            int origin = imgInfo.img[i * bmpWidth + j];
+            if (origin > 240) {
+                imgInfo.img[i * bmpWidth + j] = 255;
+            } else {
+                imgInfo.img[i * bmpWidth + j] = 0;
+            }
+        }
+    }
+
+
+    ///0代表不是边界，1代表是边界
+    BYTE *isBounds = new BYTE[imgInfo.imgSize]{0};
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+            //如果是白色区域，不操作
+            if (imgInfo.img[i * bmpWidth + j] == 255)continue;
+            if (i == 0 || i == bmpHeight - 1 || j == 0 || j == bmpWidth - 1) {
+                continue;
+            }
+
+            int curX = j;
+            int curY = i;
+
+            bool isBound = false;
+            for (int x = curX - 1; x <= curX + 1; ++x) {
+                for (int y = curY - 1; y <= curY + 1; ++y) {
+                    if (imgInfo.img[y * bmpWidth + x] != 0) {
+                        isBound = true;
+                        break;
+                    }
+                }
+            }
+            if(isBound){
+                isBounds[i * bmpWidth + j] = 1;
+            }
+        }
+    }
+
+    for (int i = 0; i < bmpHeight; ++i) {
+        for (int j = 0; j < bmpWidth; ++j) {
+
+            if(isBounds[i * bmpWidth + j] == 1){
+                imgInfo.img[i * bmpWidth + j] = 0;
+            }else {
+                imgInfo.img[i * bmpWidth + j] = 255;
+
+            }
+        }
+    }
+
+
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, imgInfo.img,
+          (rootPath + "contourExtractionImage.bmp").data(), imgInfo.imgSize);
 
 }
 
