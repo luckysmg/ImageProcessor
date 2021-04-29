@@ -1091,7 +1091,7 @@ void Processor:: hough(char *filename, int alpha) {
     for (int i = 0; i < luo; i++) {
         for (int j = 0; j < 180; j++) {
             start_flag = 0;
-            double angle = j * 3.14159 / 180;
+            double angle = j * 3.1415926 / 180;
             for (int x = 0; x < imgInfo.infoHeader.biWidth; x++) {
                 for (int y = 0; y < imgInfo.infoHeader.biHeight; y++) {
                     if (i == (int) (x * cos(angle) + y * sin(angle)) &&
