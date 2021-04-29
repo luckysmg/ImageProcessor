@@ -544,8 +544,8 @@ void Processor::scaleImage(const char *path) {
 
     int desBufSize = ((desWidth * imgInfo.infoHeader.biBitCount + 31) / 32) * 4 * desHeight;
 
-    unsigned char *ImageSize;
-    ImageSize = new unsigned char[desBufSize];
+    unsigned char *img;
+    img = new unsigned char[desBufSize];
 
     BITMAPFILEHEADER fileHeader;
     fileHeader.bfType = 0x4D42;
@@ -573,15 +573,15 @@ void Processor::scaleImage(const char *path) {
             int tXN = int(j / scale);
             int tYN = int(i / scale);
             //值拷贝
-            ImageSize[(i * desWidth + j) * factor + i * num1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+            img[(i * desWidth + j) * factor + i * num1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
                                                                             tYN * num];
-            ImageSize[(i * desWidth + j) * factor + i * num1 + 1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+            img[(i * desWidth + j) * factor + i * num1 + 1] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
                                                                                 tYN * num + 1];
-            ImageSize[(i * desWidth + j) * factor + i * num1 + 2] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
+            img[(i * desWidth + j) * factor + i * num1 + 2] = imgInfo.img[(tYN * m_nWidth + tXN) * factor +
                                                                                 tYN * num + 2];
         }
     }
-    write(fileHeader, infoHeader, imgInfo.pRGB, ImageSize, (rootPath + "scaledImage.bmp").data(), desBufSize);
+    write(fileHeader, infoHeader, imgInfo.pRGB, img, (rootPath + "scaledImage.bmp").data(), desBufSize);
 }
 
 void Processor::translateImage(const char *path) {
@@ -850,7 +850,6 @@ void Processor::segmentationByOTSU(const char *path) {
     BYTE *newImage = new BYTE[imgInfo.imgSize];
 
     int value = OtsuThreshold(bmpWidth, bmpHeight, imgInfo.img);
-    cout << value;
 
     Processor::genHistogramWithGivenThreshold(path, value);
     for (int i = 0; i < bmpHeight; i++) {
@@ -1030,60 +1029,123 @@ void Processor::edgeDetectByLOG(const char *path) {
 
 }
 
-void Processor::lineDetect(const char *path) {
-
-    ImageInfo imgInfo = readImage(path);
+void Processor:: hough(char *filename, int alpha) {
+    ImageInfo imgInfo = readImage(filename);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
-
-    //二值化
-    for (int i = 0; i < bmpHeight; ++i) {
-        for (int j = 0; j < bmpWidth; ++j) {
-            if (imgInfo.img[i * bmpWidth + j] > 140) {
-                imgInfo.img[i * bmpWidth + j] = 255;
-            } else {
-                imgInfo.img[i * bmpWidth + j] = 0;
-            }
+    int luo = (int) (sqrt(pow(imgInfo.infoHeader.biWidth, 2) +
+                          pow(imgInfo.infoHeader.biHeight, 2)) + 1);
+    //直线数组
+    int **count = (int **) malloc(sizeof(int *) * luo);
+    for (int i = 0; i < luo; i++) {
+        count[i] = (int *) malloc(sizeof(int) * 180);
+    }
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            count[i][j] = 0;
         }
     }
 
+    int **startX = (int **) malloc(sizeof(int *) * luo);
+    for (int i = 0; i < luo; i++) {
+        startX[i] = (int *) malloc(sizeof(int) * 180);
+    }
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            startX[i][j] = 0;
+        }
+    }
+    int start_flag = 0;
 
-    //斜率是-99 ~ 100，截距是-99 ~ 100
-    int data[200][200]{0};
-    int diff = 99;
+    int **endX = (int **) malloc(sizeof(int *) * luo);
+    for (int i = 0; i < luo; i++) {
+        endX[i] = (int *) malloc(sizeof(int) * 180);
+    }
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            endX[i][j] = 0;
+        }
+    }
 
-    int sum = 0;
+    int **startY = (int **) malloc(sizeof(int *) * luo);
+    for (int i = 0; i < luo; i++) {
+        startY[i] = (int *) malloc(sizeof(int) * 180);
+    }
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            startY[i][j] = 0;
+        }
+    }
 
-    cout << sum << endl;
+    int **endY = (int **) malloc(sizeof(int *) * luo);
+    for (int i = 0; i < luo; i++) {
+        endY[i] = (int *) malloc(sizeof(int) * 180);
+    }
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            endY[i][j] = 0;
+        }
+    }
 
-    for (int y = 0; y < bmpHeight; ++y) {
-        for (int x = 0; x < bmpWidth; ++x) {
-            if (imgInfo.img[y * bmpWidth + x] == 255) {
-                continue;
-            }
-
-            for (int k = -99; k <= 100; ++k) {
-                for (int b = -99; b <= 100; ++b) {
-                    if (y == k * x + b) {
-                        data[k + diff][b + diff] += 1;
+    //直线上的点计数
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            start_flag = 0;
+            double angle = j * 3.14159 / 180;
+            for (int x = 0; x < imgInfo.infoHeader.biWidth; x++) {
+                for (int y = 0; y < imgInfo.infoHeader.biHeight; y++) {
+                    if (i == (int) (x * cos(angle) + y * sin(angle)) &&
+                        imgInfo.img[y * bmpWidth + x] == 0) {
+                        if (start_flag == 0) {
+                            startX[i][j] = x;
+                            startY[i][j] = y;
+                            start_flag = 1;
+                        }
+                        endX[i][j] = x;
+                        endY[i][j] = y;
+                        count[i][j]++;
                     }
                 }
             }
         }
     }
+    //确定端点
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j++) {
+            if (startX[i][j] > endX[i][j]) {
+                int tempX = startX[i][j];
+                startX[i][j] = endX[i][j];
+                endX[i][j] = tempX;
+            }
+            if (startY[i][j] > endY[i][j]) {
+                int tempY = startY[i][j];
+                startY[i][j] = endY[i][j];
+                endY[i][j] = tempY;
+            }
+        }
+    }
+//清空
+    for (int x = 0; x < bmpWidth; x++) {
+        for (int y = 0; y < imgInfo.infoHeader.biHeight; y++) {
+            imgInfo.img[y * bmpWidth + x] = 255;
+        }
+    }
 
-    BYTE *resImage = new BYTE[imgInfo.imgSize]{0};
+    for (int i = 0; i < luo; i++) {
+        for (int j = 0; j < 180; j += 5) {
+            if (count[i][j] > alpha) {
+                for (int x = 0; x < imgInfo.infoHeader.biWidth; x++) {
+                    if (endX[i][j] >= x && startX[i][j] <= x) {
+                        double angle = j * 3.14159 / 180;
+                        if (angle != 0) {
+                            double rect_y = (i - x * cos(angle)) / sin(angle);
 
-    for (int k = 0; k < 200; ++k) {
-        for (int b = 0; b < 200; ++b) {
-            if (data[k][b] >= 10) {
-
-                for (int y = 0; y < bmpHeight; ++y) {
-                    for (int x = 0; x < bmpWidth; ++x) {
-                        int ak = k - diff;
-                        int ab = b - diff;
-                        if (y == ak * x + ab) {
-                            resImage[y * bmpWidth + x] = 255;
+                            imgInfo.img[(int) rect_y * bmpWidth + x] = 0;
+                        }
+                        if (j == 0) {
+                            for (int climb = startY[i][j]; climb < endY[i][j]; climb++) {
+                                imgInfo.img[climb * bmpWidth + i] = 0;
+                            }
                         }
                     }
                 }
@@ -1091,14 +1153,16 @@ void Processor::lineDetect(const char *path) {
         }
     }
 
-    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, resImage, (rootPath + "lineDetectImage.bmp").data(),
-          imgInfo.imgSize);
+    write(imgInfo.fileHeader, imgInfo.infoHeader, imgInfo.pRGB, imgInfo.img,
+          (rootPath + "lineDetectImage.bmp").data(),
+          imgInfo.infoHeader.biSizeImage);
 }
 
 void Processor::connectedDomainAnalysis(const char *path) {
 
 
     ImageInfo imgInfo = readImage(path);
+
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
 
@@ -1220,5 +1284,8 @@ void Processor::contourExtraction(const char *path) {
           (rootPath + "contourExtractionImage.bmp").data(), imgInfo.imgSize);
 
 }
+
+
+
 
 

@@ -70,6 +70,8 @@ ImageInfo readImage(const char *filename) {
     fread(img, sizeof(unsigned char), imageInfo.imgSize, bmp);
     imageInfo.img = img;
     fclose(bmp);
+
+
     return imageInfo;
 }
 

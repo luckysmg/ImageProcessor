@@ -114,8 +114,8 @@ public:
     ///基于LOG来做边缘检测
     static void edgeDetectByLOG(const char* path);
 
-    ///直线检测
-    static void lineDetect(const char* path);
+    ///霍夫变换
+    static void Processor:: hough(char *filename, int alpha);
 
 
     ///连通域分析
@@ -124,6 +124,8 @@ public:
 
     ///轮廓提取
     static void contourExtraction(const char* path);
+
+
 
 
 

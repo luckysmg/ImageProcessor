@@ -8,16 +8,6 @@
 
 C:/Users/luckysmg/Desktop/ImageProcessor/Models.h
 
-C:/Users/luckysmg/Desktop/ImageProcessor/Processor.cpp
-Processor.h
-C:/Users/luckysmg/Desktop/ImageProcessor/Processor.h
-Util.h
-C:/Users/luckysmg/Desktop/ImageProcessor/Util.h
-algorithm
--
-unordered_map
--
-
 C:/Users/luckysmg/Desktop/ImageProcessor/Processor.h
 iostream
 -
@@ -28,9 +18,7 @@ vector
 set
 -
 
-C:/Users/luckysmg/Desktop/ImageProcessor/Util.h
-iostream
--
-Models.h
-C:/Users/luckysmg/Desktop/ImageProcessor/Models.h
+C:/Users/luckysmg/Desktop/ImageProcessor/main.cpp
+Processor.h
+C:/Users/luckysmg/Desktop/ImageProcessor/Processor.h
 

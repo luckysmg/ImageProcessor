@@ -1,56 +1,41 @@
 #pragma pack(2)
 #pragma comment(linker, "/STACK:1024000000,1024000000")
 #include "Processor.h"
+
 using namespace std;
 
-std::string readPath = "C:\\Users\\luckysmg\\Desktop\\ImageProcessor\\";
-
-
-const char* getPath(std::string path);
-
 int main() {
-
-//    Processor::divide24ImageToRGBAndGenImages(getPath("rgb.bmp"));
-//    Processor::covert24BitImageToGrey(getPath("rgb.bmp"));
-//    Processor::convertColor(getPath("rgb.bmp"));
-
-//    Processor::genHistogram(getPath("test.bmp"));
-//    Processor::histogramEqualization(getPath("test.bmp"));
-
-//    Processor::averageImage(getPath("noise2.bmp"));
-//    Processor::medianFiltering(getPath("noise2.bmp"));
-
-//    Processor::translateImage(getPath("lena.bmp"));
-//    Processor::mirrorImage(getPath("lena.bmp"));
-//    Processor::scaleImage(getPath("lena.bmp"));
-//    Processor::rotateImage(getPath("lena.bmp"));
-
-//    Processor::segmentationOnGivenThresholdFor8(getPath("testhuidu.bmp"));
-//    Processor::segmentationByIterationFor8(getPath("testhuidu.bmp"));
-//    Processor::segmentationByOTSU(getPath("testhuidu.bmp"));
-
-
-     ///
-
-
-//    Processor::segmentImageWithGrow(getPath("divide.bmp"));
-//    Processor::edgeDetectByPrewitt(getPath("lena.bmp"));
-//    Processor::edgeDetectBySobel(getPath("lena.bmp"));
-//    Processor::edgeDetectByLOG(getPath("lena.bmp"));
+//
+//    Processor::divide24ImageToRGBAndGenImages("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+//    Processor::covert24BitImageToGrey("C:/Users/luckysmg/Desktop/ImageProcessor/rgb1.bmp");
+//    Processor::convertColor("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+//
+//    Processor::genHistogram("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+//    Processor::histogramEqualization("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+//
+//    Processor::averageImage("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+//    Processor::medianFiltering("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+//
+//    Processor::translateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//    Processor::mirrorImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//    Processor::scaleImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//    Processor::rotateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//
+//    Processor::segmentationOnGivenThresholdFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+//    Processor::segmentationByIterationFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+//    Processor::segmentationByOTSU("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+//
+//    Processor::segmentImageWithGrow("C:/Users/luckysmg/Desktop/ImageProcessor/divide.bmp");
+//    Processor::edgeDetectByPrewitt("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//    Processor::edgeDetectBySobel("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+//    Processor::edgeDetectByLOG("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
 
 
 //    Processor::lineDetect(getPath("testline.bmp"));
+    Processor::hough("C:/Users/luckysmg/Desktop/ImageProcessor/testline.bmp",4);
 
-
-
-//    Processor::connectedDomainAnalysis(getPath("area.bmp"));
-    Processor::contourExtraction(getPath("area.bmp"));
-
-
+//    Processor::connectedDomainAnalysis("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
+//    Processor::contourExtraction("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
 
     return 0;
-}
-
-const char* getPath(std::string path){
-    return readPath.append(path).data();
 }
