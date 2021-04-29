@@ -1029,7 +1029,7 @@ void Processor::edgeDetectByLOG(const char *path) {
 
 }
 
-void Processor:: hough(char *filename, int alpha) {
+void Processor:: hough(const char *filename, int alpha) {
     ImageInfo imgInfo = readImage(filename);
     int bmpHeight = imgInfo.infoHeader.biHeight;
     int bmpWidth = imgInfo.imgSize / imgInfo.infoHeader.biHeight;
