@@ -5,55 +5,127 @@
 using namespace std;
 //
 void menu(){
-    std::cout << "æ•°å­—å›¾åƒå¤„ç†" << "\n" << "è¾“å…¥æ•°å­—é€‰æ‹©åŠŸèƒ½" << "\n" << "1:24ä½åˆ†è‰²" << "\n" << "2:8ä½ç°åº¦åŒ–" << "\n" << "3:8ä½åè‰²"
-              << "\n" << "4:ç»˜åˆ¶ç›´æ–¹å›¾" << "\n" << "5:ç›´æ–¹å›¾å‡è¡¡åŒ–" << "\n" << "6:å¹³å‡æ»¤æ³¢" << "\n" << "7:ä¸­å€¼æ»¤æ³¢" << "\n" << "8:ç¼©æ”¾"
+    std::cout << "Êý×ÖÍ¼Ïñ´¦Àí" << "\n" << "ÊäÈëÊý×ÖÑ¡Ôñ¹¦ÄÜ" << "\n" << "1:24Î»·ÖÉ«" << "\n" << "2:8Î»»Ò¶È»¯" << "\n" << "3:8Î»·´É«"
+              << "\n" << "4:»æÖÆÖ±·½Í¼" << "\n" << "5:Ö±·½Í¼¾ùºâ»¯" << "\n" << "6:Æ½¾ùÂË²¨" << "\n" << "7:ÖÐÖµÂË²¨" << "\n" << "8:Ëõ·Å"
               << "\n"
-              << "9:å¹³ç§»" << "\n" << "10:é•œåƒ" << "\n" << "11:æ—‹è½¬" << "\n" << "12:å›ºå®šé˜ˆå€¼åˆ†å‰²" << "\n" << "13:è¿­ä»£é˜ˆå€¼åˆ†å‰²" << "\n"
-              << "14:å¤§æ´¥æ³•" << "\n" << "15:åŒºåŸŸç”Ÿé•¿" << "\n" << "16:åˆ†è£‚åˆå¹¶" << "\n" << "17:Prewitt" << "\n" << "18:Sobel"
+              << "9:Æ½ÒÆ" << "\n" << "10:¾µÏñ" << "\n" << "11:Ðý×ª" << "\n" << "12:¹Ì¶¨ãÐÖµ·Ö¸î" << "\n" << "13:µü´úãÐÖµ·Ö¸î" << "\n"
+              << "14:´ó½ò·¨" << "\n" << "15:ÇøÓòÉú³¤" << "\n" << "16:·ÖÁÑºÏ²¢" << "\n" << "17:Prewitt" << "\n" << "18:Sobel"
               << "\n" << "19:LOG" << "\n"
-              << "20:ç›´çº¿æ£€æµ‹" << "\n" << "21:è¿žé€šåŸŸåˆ†æž" << "\n" << "22:è½®å»“æå–" << "\n"<<"æ‰¹å¤„ç†"<<"\n";
+              << "20:Ö±Ïß¼ì²â" << "\n" << "21:Á¬Í¨Óò·ÖÎö" << "\n" << "22:ÂÖÀªÌáÈ¡" << "\n"<<"23:Åú´¦Àí"<<"\n";
 
 }
 
 int main() {
 
-    //menu();
+    menu();
+
+    while (true){
+        int val = 0;
+        cin >> val;
+        switch (val) {
+            case 1:
+                Processor::divide24ImageToRGBAndGenImages("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+                break;
+            case 2:
+                Processor::covert24BitImageToGrey("C:/Users/luckysmg/Desktop/ImageProcessor/rgb1.bmp");
+                break;
+            case 3:
+                Processor::convertColor("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+                break;
+            case 4:
+                Processor::genHistogram("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+                break;
+            case 5:
+                Processor::histogramEqualization("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+                break;
+            case 6:
+                Processor::averageImage("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+                break;
+            case 7:
+                Processor::medianFiltering("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+                break;
+            case 8:
+                Processor::scaleImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 9:
+                Processor::translateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 10:
+                Processor::mirrorImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 11:
+                Processor::rotateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 12:
+                Processor::segmentationOnGivenThresholdFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                break;
+            case 13:
+                Processor::segmentationByIterationFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                break;
+            case 14:
+                Processor::segmentationByOTSU("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                break;
+            case 15:
+                Processor::segmentImageWithGrow("C:/Users/luckysmg/Desktop/ImageProcessor/divide.bmp");
+                break;
+            case 16:
+                break;
+            case 17:
+                Processor::edgeDetectByPrewitt("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 18:
+                Processor::edgeDetectBySobel("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                break;
+            case 19:
+                Processor::edgeDetectByLOG("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+
+                break;
+            case 20:
+                Processor::hough("C:/Users/luckysmg/Desktop/ImageProcessor/testline.bmp",20);
+
+                break;
+            case 21:
+                Processor::connectedDomainAnalysis("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
+                break;
+            case 22:
+                Processor::contourExtraction("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
+                break;
+            case 23:
+                Processor::divide24ImageToRGBAndGenImages("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+                Processor::covert24BitImageToGrey("C:/Users/luckysmg/Desktop/ImageProcessor/rgb1.bmp");
+                Processor::convertColor("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
+                Processor::genHistogram("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+                Processor::histogramEqualization("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
+                Processor::averageImage("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+                Processor::medianFiltering("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
+                Processor::scaleImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::translateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::mirrorImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::rotateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::segmentationOnGivenThresholdFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                Processor::segmentationByIterationFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                Processor::segmentationByOTSU("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
+                Processor::segmentImageWithGrow("C:/Users/luckysmg/Desktop/ImageProcessor/divide.bmp");
+                Processor::edgeDetectByPrewitt("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::edgeDetectBySobel("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::edgeDetectByLOG("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
+                Processor::hough("C:/Users/luckysmg/Desktop/ImageProcessor/testline.bmp",20);
+                Processor::connectedDomainAnalysis("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
+                Processor::contourExtraction("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
+                cout << "Åú´¦ÀíÍê³É" << endl;
+                break;
+            default:
+                break;
+        }
+
+    }
 
 
 
 
 
 
-//
-//    Processor::divide24ImageToRGBAndGenImages("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
-//    Processor::covert24BitImageToGrey("C:/Users/luckysmg/Desktop/ImageProcessor/rgb1.bmp");
-//    Processor::convertColor("C:/Users/luckysmg/Desktop/ImageProcessor/rgb.bmp");
-//
-//    Processor::genHistogram("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
-//    Processor::histogramEqualization("C:/Users/luckysmg/Desktop/ImageProcessor/test.bmp");
-//
-//    Processor::averageImage("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
-//    Processor::medianFiltering("C:/Users/luckysmg/Desktop/ImageProcessor/noise2.bmp");
-//
-//    Processor::translateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//    Processor::mirrorImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//    Processor::scaleImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//    Processor::rotateImage("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//
-//    Processor::segmentationOnGivenThresholdFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
-//    Processor::segmentationByIterationFor8("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
-//    Processor::segmentationByOTSU("C:/Users/luckysmg/Desktop/ImageProcessor/testhuidu.bmp");
-//
-//    Processor::segmentImageWithGrow("C:/Users/luckysmg/Desktop/ImageProcessor/divide.bmp");
-//    Processor::edgeDetectByPrewitt("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//    Processor::edgeDetectBySobel("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
-//    Processor::edgeDetectByLOG("C:/Users/luckysmg/Desktop/ImageProcessor/lena.bmp");
 
-
-//    Processor::hough("C:/Users/luckysmg/Desktop/ImageProcessor/testline.bmp",20);
-
-//    Processor::connectedDomainAnalysis("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
-//    Processor::contourExtraction("C:/Users/luckysmg/Desktop/ImageProcessor/area.bmp");
 
     return 0;
 }
