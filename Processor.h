@@ -115,7 +115,7 @@ public:
     static void edgeDetectByLOG(const char* path);
 
     ///霍夫变换
-    static void Processor:: hough(const char *filename, int alpha);
+    static void hough(const char *filename, int alpha);
 
 
     ///连通域分析
